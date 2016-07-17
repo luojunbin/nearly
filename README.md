@@ -240,10 +240,8 @@ let FailDialog = connect(Dialog, 'dialog#fail');
 2. 分类目录结构和特征目录结构Nearly都能适应, 取决于开发者制定的规则;
 3. 更推荐使用 stateless component, 除非需要生命周期方法;
 4. 在 example/todomvc 中只使用了 actions 和 components 目录, 但对于更复杂的数据操作, 应该有个 models目录, 毕竟现在更推荐 SAM 模式;
-5. 你可能觉得这并没有什么 SAM, 只是将一个组件的render 方法放进 components 里, 其余的放进 actions 里, 这只是因为两者之间的 store 是透明的, 而开发者知道却不需要关心 store; 这也从侧面说明了从不使用数据流到使用 Nearly 的迁移成本十分低;
-6. 代码
-7. 使用Nearly时配置 Hot Replacement 十分简单, 请参考 example/todomvc;
-8. 欢迎 PR~~
+5. 使用Nearly时配置 Hot Replacement 十分简单, 请参考 example/todomvc;
+6. 欢迎 PR~~
 
 
 
