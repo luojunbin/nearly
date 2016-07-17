@@ -100,6 +100,7 @@ import {connect, dispatcher} from 'nearly';
 let incr = dispatcher('counter::increment');
 let decr = dispatcher('counter::decrement');
 
+
 // 更推荐使用 stateless component, 除非需要生命周期方法
 function Counter(props) {
 
