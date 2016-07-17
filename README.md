@@ -1,4 +1,4 @@
-Nearly 文档
+# Nearly 文档
 
 ## 前言
 Nearly 是一个轻量, 高效, 简洁的数据流框架; 其核心思想来自 flux 和 redux;
