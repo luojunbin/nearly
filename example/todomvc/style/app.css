@@ -1,0 +1,23 @@
+.glb-hide {
+    display: none!important;
+}
+
+.fade-enter {
+    opacity: .01;
+}
+
+.fade-enter.fade-enter-active {
+    transition: opacity 300ms ease-in;
+
+    opacity: 1;
+}
+
+.fade-leave {
+    opacity: 1;
+}
+
+.fade-leave.fade-leave-active {
+    transition: opacity 250ms ease-in;
+
+    opacity: .01;
+}

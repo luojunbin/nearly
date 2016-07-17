@@ -1,0 +1,10 @@
+webpackHotUpdate(0,{
+
+/***/ 208:
+/***/ function(module, exports, __webpack_require__) {
+
+	eval("'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.default = Main;\n\nvar _react = __webpack_require__(65);\n\nvar _react2 = _interopRequireDefault(_react);\n\nvar _TodoList = __webpack_require__(209);\n\nvar _TodoList2 = _interopRequireDefault(_TodoList);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n/* This section should be hidden by default and shown when there are todos */\nfunction Main(props) {\n    return _react2.default.createElement(\n        'section',\n        { className: 'main' },\n        _react2.default.createElement('input', { className: 'toggle-all', type: 'checkbox' }),\n        _react2.default.createElement(\n            'label',\n            { htmlFor: 'toggle-all' },\n            'Mark all as complete'\n        ),\n        _react2.default.createElement(_TodoList2.default, null)\n    );\n}//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMjA4LmpzIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vL2NvbXBvbmVudHMvTWFpbi5qcz82MzEwIl0sInNvdXJjZXNDb250ZW50IjpbIlxuLyogVGhpcyBzZWN0aW9uIHNob3VsZCBiZSBoaWRkZW4gYnkgZGVmYXVsdCBhbmQgc2hvd24gd2hlbiB0aGVyZSBhcmUgdG9kb3MgKi9cbmltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7XG5cbmltcG9ydCBUb2RvTGlzdCBmcm9tICcuL1RvZG9MaXN0JztcblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gTWFpbihwcm9wcykge1xuICAgIHJldHVybiAoXG4gICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT1cIm1haW5cIj5cbiAgICAgICAgICAgIDxpbnB1dCBjbGFzc05hbWU9XCJ0b2dnbGUtYWxsXCIgdHlwZT1cImNoZWNrYm94XCIgLz5cbiAgICAgICAgICAgIDxsYWJlbCBodG1sRm9yPVwidG9nZ2xlLWFsbFwiPk1hcmsgYWxsIGFzIGNvbXBsZXRlPC9sYWJlbD5cbiAgICAgICAgICAgIDxUb2RvTGlzdCAvPlxuICAgICAgICA8L3NlY3Rpb24+XG4gICAgKVxufVxuXG5cbi8qKiBXRUJQQUNLIEZPT1RFUiAqKlxuICoqIGNvbXBvbmVudHMvTWFpbi5qc1xuICoqLyJdLCJtYXBwaW5ncyI6Ijs7Ozs7QUFNQTtBQUNBO0FBTEE7QUFDQTs7O0FBQ0E7QUFDQTs7Ozs7O0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFDQTtBQUNBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFDQTtBQUhBO0FBTUEiLCJzb3VyY2VSb290IjoiIn0=");
+
+/***/ }
+
+})

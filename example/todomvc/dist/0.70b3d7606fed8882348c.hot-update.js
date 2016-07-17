@@ -1,0 +1,10 @@
+webpackHotUpdate(0,{
+
+/***/ 207:
+/***/ function(module, exports, __webpack_require__) {
+
+	eval("\"use strict\";\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.default = Main;\n\nvar _react = __webpack_require__(468);\n\nvar _react2 = _interopRequireDefault(_react);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction Main(props) {\n    return _react2.default.createElement(\n        \"section\",\n        { className: \"main\" },\n        _react2.default.createElement(\"input\", { className: \"toggle-all\", type: \"checkbox\" }),\n        _react2.default.createElement(\n            \"label\",\n            { \"for\": \"toggle-all\" },\n            \"Mark all as complete\"\n        ),\n        _react2.default.createElement(TodoList, null)\n    );\n}\n/* This section should be hidden by default and shown when there are todos *///# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMjA3LmpzIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vL2NvbXBvbmVudHMvTWFpbi5qcz82MzEwIl0sInNvdXJjZXNDb250ZW50IjpbIlxuLyogVGhpcyBzZWN0aW9uIHNob3VsZCBiZSBoaWRkZW4gYnkgZGVmYXVsdCBhbmQgc2hvd24gd2hlbiB0aGVyZSBhcmUgdG9kb3MgKi9cbmltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7XG5cblxuZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gTWFpbihwcm9wcykge1xuICAgIHJldHVybiAoXG4gICAgICAgIDxzZWN0aW9uIGNsYXNzTmFtZT1cIm1haW5cIj5cbiAgICAgICAgICAgIDxpbnB1dCBjbGFzc05hbWU9XCJ0b2dnbGUtYWxsXCIgdHlwZT1cImNoZWNrYm94XCIgLz5cbiAgICAgICAgICAgIDxsYWJlbCBmb3I9XCJ0b2dnbGUtYWxsXCI+TWFyayBhbGwgYXMgY29tcGxldGU8L2xhYmVsPlxuICAgICAgICAgICAgPFRvZG9MaXN0IC8+XG4gICAgICAgIDwvc2VjdGlvbj5cbiAgICApXG59XG5cblxuLyoqIFdFQlBBQ0sgRk9PVEVSICoqXG4gKiogY29tcG9uZW50cy9NYWluLmpzXG4gKiovIl0sIm1hcHBpbmdzIjoiOzs7OztBQUtBO0FBQ0E7QUFKQTtBQUNBOzs7OztBQUVBO0FBQ0E7QUFDQTtBQUFBO0FBQ0E7QUFDQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQ0E7QUFIQTtBQU1BOyIsInNvdXJjZVJvb3QiOiIifQ==");
+
+/***/ }
+
+})
