@@ -19,7 +19,7 @@ var server = new webpackDevServer(compiler, {
     publicPath: '/static/'
 });
 
-server.listen(8080, '127.0.0.1', function() {
+server.listen(8081, '127.0.0.1', function() {
     console.log( 'start server' );
 });
 

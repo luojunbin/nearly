@@ -20,7 +20,7 @@ export function add(prevState, text) {
 
     let uid = createId();
 
-    let list = prevState.list.concat([{...ITEM_MODEL, text, uid}]);
+    let list = [...prevState.list, {...ITEM_MODEL, text, uid}];
 
     return {list};
 }

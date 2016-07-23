@@ -16,7 +16,7 @@ Nearly 是一个轻量, 高效, 简洁的数据流框架; 其核心思想来自 
 1. 通过使用与action文件相关联的命令来替代 redux 中的 type;
 2. 将 dispatch 操作从 store 中分离, 并对使用者屏蔽了 store 的存在;
 3. props 集中管理, dispatch 传参给 action, action 返回的状态直接用于 render;
-3. 更轻量, min 后只有5K;
+4. 更轻量, min 后只有5K;
 
 
 ## 安装
@@ -244,4 +244,8 @@ let FailDialog = connect(Dialog, 'dialog#fail');
 6. 欢迎 PR~~
 
 
+
+
+
+getState 不接受传参? 一般能通过直接传参给 props 实现
 

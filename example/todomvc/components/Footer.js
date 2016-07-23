@@ -14,10 +14,10 @@ function getClassName(filter) {
     };
 
     if (filter in base) {
-        return Object.assign(base, {[filter]: 'selected'});
+        return {...base, [filter]: 'selected'};
     }
 
-    return Object.assign(base, {'ALL': 'selected'});
+    return {...base, 'ALL': 'selected'};
 }
 
 export default function Footer(props) {
