@@ -15,7 +15,7 @@ Nearly 是一个轻量, 高效, 简洁的数据流框架; 其核心思想来自 
 Nearly 作为一个更简洁的数据流, 其结构图如下:
 
 
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow2.png?raw=true)
+![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow.png?raw=true)
 
 
 相比 `redux`, `Nearly` 有以下特点:
