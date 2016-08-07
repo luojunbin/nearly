@@ -1,21 +1,26 @@
 
+let parser = {
+    nrSplit(str) {
+        let [modName, fnName] = str.split('::');
 
-function nrSplit(str) {
-    let [modName, fnName] = str.split('::');
+        return {modName, fnName};
+    },
 
-    return {modName, fnName};
+    getMod(modName) {
+        let realName = modName.split('#')[0];
+
+        return require(`./${realName}.js`);
+    }
 }
 
-function getMod(modName) {
-    let realName = modName.split('#')[0];
+export let config = {parser};
 
-    return require(`./${realName}.js`);
-}
+export function configure(type, opt) {
+    if (config[type] === undefined) {
+        throw Error(`configure does not supports ${type}`);
+    }
 
-export let config = {nrSplit, getMod};
-
-export function configure(opt) {
-    config = {...config, ...opt};
+    config[type] = {...config[type], ...opt};
 }
 
 

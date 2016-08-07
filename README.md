@@ -69,7 +69,7 @@ render(
 import {configure} from 'nearly`;
 
 // 默认配置也是这样
-configure('Parser', {
+configure('parser', {
     // 根据 :: 将字符串指令分割为 modName(模块名) 和 fnName(方法名);
     nrSplit(actionStr) {
         let [modName, fnName] = actionStr.split('::');
