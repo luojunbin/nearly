@@ -50,6 +50,10 @@ npm i nearly --save
 > /index.js
 
 ```
+/**
+ * @file 应用入口
+ */
+
 import React from 'react';
 import { render } from 'react-dom';
 
@@ -66,6 +70,11 @@ render(
 > /nearly-config.js
 
 ```
+/**
+ * @file 配置 nearly
+ */
+
+
 import {configure} from 'nearly`;
 
 // 默认配置也是这样
@@ -87,7 +96,10 @@ configure('parser', {
 > /actions/counter.js
 
 ```
-// 根据 Parser 里的配置
+/**
+ * @file /components/Counter.js 对应的 ActionFile
+ */
+
 
 // 返回初始 state
 export function getState() {
@@ -107,6 +119,10 @@ export function add(prevState, num) {
 > /components/Counter.js
 
 ```
+/**
+ * @file 程序的主逻辑
+ */
+
 import {connect, dispatcher} from 'nearly';
 
 // 这里的 actionStr 为 'counter::add';
@@ -131,7 +147,7 @@ export default connect(Counter, 'counter');
 
 
 ## Dispatcher
-`Dispatcher` 由 `Parser` 和 `ActionFunction` 组成; 
+`Dispatcher` 由 `Parser` 和 `ActionFunction` 组成, 这部分包括如下 API:
 
 ### dispatch(ActionStr, args)
 dispatch 会根据 ActionStr 找到相应的方法, 并将 args 作为参数传入, 将方法返回的结果传给 render 方法;

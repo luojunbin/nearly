@@ -3,8 +3,7 @@
     "version": "1.0.0",
     "description": "A light and powerful data flow with React",
     "scripts": {
-        "bulid1": "babel src --out-dir lib",
-        "build": "NODE_ENV=production webpack -w"
+        "build": "NODE_ENV=production webpack && babel src --out-dir lib"
     },
     "main": "lib/index.js",
     "repository": {

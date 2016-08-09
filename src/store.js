@@ -1,10 +1,10 @@
 // 不能直接导出内部的方法, 这些方法会被改变
-import {parser} from './config';
+import config from './config';
 
 class Store {
 
     constructor(modName) {
-        let mod = parser.getMod(modName);
+        let mod = config.parser.getMod(modName);
 
         this.state = mod.getState ? mod.getState() : {};
 

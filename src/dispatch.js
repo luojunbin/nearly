@@ -1,5 +1,5 @@
 
-import {parser} from './config';
+import config from './config';
 
 import {getStore} from './store';
 
@@ -7,9 +7,9 @@ import {isPromise} from './utils';
 
 export function dispatch(path, ...args) {
 
-    let {modName, fnName} = parser.nrSplit(path);
+    let {modName, fnName} = config.parser.nrSplit(path);
 
-    let mod = parser.getMod(modName);
+    let mod = config.parser.getMod(modName);
 
     let store = getStore(modName);
 

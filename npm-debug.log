@@ -1,0 +1,122 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@3.8.9
+3 info using node@v6.2.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/baidu/project/nearly',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/baidu/.npm/nearly/1.0.0/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/baidu/.npm correctMkdir not in flight; initializing
+10 info lifecycle nearly@1.0.0~prepublish: nearly@1.0.0
+11 silly lifecycle nearly@1.0.0~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/baidu/.npm/nearly/1.0.0/package.tgz',
+12 verbose tar pack   '/Users/baidu/project/nearly' ]
+13 verbose tarball /Users/baidu/.npm/nearly/1.0.0/package.tgz
+14 verbose folder /Users/baidu/project/nearly
+15 verbose addLocalTarball adding from inside cache /Users/baidu/.npm/nearly/1.0.0/package.tgz
+16 verbose correctMkdir /Users/baidu/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd nearly@1.0.0
+18 verbose afterAdd /Users/baidu/.npm/nearly/1.0.0/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/baidu/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/baidu/.npm/nearly/1.0.0/package/package.json written
+21 silly publish { name: 'nearly',
+21 silly publish   version: '1.0.0',
+21 silly publish   description: 'A light and powerful data flow with React',
+21 silly publish   scripts: { build: 'NODE_ENV=production webpack && babel src --out-dir lib' },
+21 silly publish   main: 'lib/index.js',
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git+https://github.com/luojunbin/nearly.git' },
+21 silly publish   license: 'MIT',
+21 silly publish   bugs: { url: 'https://github.com/luojunbin/nearly/issues' },
+21 silly publish   homepage: 'https://github.com/luojunbin/nearly',
+21 silly publish   dependencies:
+21 silly publish    { 'babel-plugin-transform-object-rest-spread': '^6.8.0',
+21 silly publish      react: '^0.14.7',
+21 silly publish      'react-dom': '^0.14.7' },
+21 silly publish   devDependencies:
+21 silly publish    { 'babel-core': '^6.3.15',
+21 silly publish      'babel-loader': '^6.2.0',
+21 silly publish      'babel-preset-es2015': '^6.3.13',
+21 silly publish      'babel-preset-react': '^6.3.13',
+21 silly publish      'babel-preset-react-hmre': '^1.1.1',
+21 silly publish      'babel-register': '^6.3.13',
+21 silly publish      'cross-env': '^1.0.7',
+21 silly publish      enzyme: '^2.0.0',
+21 silly publish      expect: '^1.6.0',
+21 silly publish      express: '^4.13.3',
+21 silly publish      mocha: '^2.2.5',
+21 silly publish      'node-libs-browser': '^0.5.2',
+21 silly publish      'react-addons-test-utils': '^0.14.7',
+21 silly publish      webpack: '^1.9.11' },
+21 silly publish   readme: '# Nearly 文档\n\n## 前言\nNearly 是一个轻量, 高效, 简洁的数据流框架; 其核心思想来自 [flux](http://facebook.github.io/flux/docs/overview.html#content) 和 [redux](https://github.com/reactjs/redux)\n\n我认为redux 是一个很强大的数据流, 但 react-redux 的写法太过于繁琐, 如:\n\n1. 我个人不喜欢`switch-case-default-return`这样的写法, 但我却没有更好的写法;\n-  每增加一个 type 就得在 actionTypes.js 中增加一个相应的常量, 再在 actions.js 中增加 dispatch 这个 type 的方法, 再在 reducer.js 中增加该 type 的 switch-case;\n-  actions.js 里面的方法, 方法名多数和 type 是一样, 其作用往往只是传参给 reducer;\n-  state 的各个属性在各个 reducer 中分散管理, 我认为这只适合在较复杂的场景下使用, ;\n\n**所以, 在复杂的业务场景下才能体现出 redux 的优势, 但在中小型应用中使用 redux 并不是一个好的选择;**\n\nNearly 作为一个更简洁的数据流, 其结构图如下:\n\n\n![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow.png?raw=true)\n\n\n相比 `redux`, `Nearly` 有以下特点:\n\n1. 通过指定 `Action` 的格式, 在传入 `Dispatcher` 时, 用 `Parser` 解析, 将其映射到某个文件中的 `ActionFunction`, `ActionFunction` 将执行的结果传给 `Store`;\n-  将 `Dispatcher` 从 `Store` 中分离, 并对使用者屏蔽了 `Store` 的存在;\n-  对 State 进行集中管理;\n-  API 更加简单, 在业务中一般只会用到 `connect` 和 `dispatch` 方法, 你甚至不需要了解 flux 就能使用;\n-  更轻量, min 后只有5K;\n\n\n## 安装\n\n```\nnpm i nearly --save\n```\n\n## 使用\n\n> 目录结构\n\n```js\n/app\n    /components\n        Counter.js\n    /actions\n        counter.js\n    index.js\n    nearly-config.js\n```\n\n> /index.js\n\n```\n/**\n * @file 应用入口\n */\n\nimport React from \'react\';\nimport { render } from \'react-dom\';\n\nimport \'./nearly-config\';\n\nimport Counter from \'./components/Counter\';\n\nrender(\n    <Counter />,\n    document.getElementById(\'root\')\n)\n```\n\n> /nearly-config.js\n\n```\n/**\n * @file 配置 nearly\n */\n\n\nimport {configure} from \'nearly`;\n\n// 默认配置也是这样\nconfigure(\'parser\', {\n    // 根据 :: 将字符串指令分割为 modName(模块名) 和 fnName(方法名);\n    nrSplit(actionStr) {\n        let [modName, fnName] = actionStr.split(\'::\');\n        return {modName, fnName};\n    },\n\n    // 根据获得的 modName 来 require 相应模块;\n    nrImport(modName) {\n        let realName = modName.split(\'#\')[0];\n        return require(`./actions/${realName}.js`);\n    }\n}\n```\n\n> /actions/counter.js\n\n```\n/**\n * @file /components/Counter.js 对应的 ActionFile\n */\n\n\n// 返回初始 state\nexport function getState() {\n    return {\n        count: 0\n    };\n}\n\n// 加 action\nexport function add(prevState, num) {\n    return {\n        count: prevState.count + num\n    };\n}\n```\n\n> /components/Counter.js\n\n```\n/**\n * @file 程序的主逻辑\n */\n\nimport {connect, dispatcher} from \'nearly\';\n\n// 这里的 actionStr 为 \'counter::add\';\n// 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法;\nlet incr = () => dispatch(\'counter::add\', 1);\nlet decr = () => dispatch(\'counter::add\', -1);\n\n// 更推荐使用 stateless component, 除非需要生命周期方法\nfunction Counter(props) {\n    return (\n        <div>\n            <a href="#" onClick={incr}> - </a>\n            <span>{props.count}</span>\n            <a href="#" onClick={decr}> + </a>\n        </div>    \n    )\n}\n// 这里用 connect 生成了一个连接了 /actions/counter.js 的组件;\nexport default connect(Counter, \'counter\');\n```\n\n\n\n## Dispatcher\n`Dispatcher` 由 `Parser` 和 `ActionFunction` 组成, 这部分包括如下 API:\n\n### dispatch(ActionStr, args)\ndispatch 会根据 ActionStr 找到相应的方法, 并将 args 作为参数传入, 将方法返回的结果传给 render 方法;\n\n### dispatcher\n即 `dispatch` 的高阶函数; 例:\n\n```\ndispatch(\'counter::add\', 1);\n等同于: dispatcher(\'counter::add\')(1);\n```\n\n## Parser\n`Parser` 的作用是: 根据一个字符串, 解析出应该 `import` 的 JS 文件, 以及这个文件中应该被调用的方法;\n`Parser` 包括两个方法: \n> `nrSplit`: 从字符串中获得模块名与方法名;\n> `nrImport`: 使用模块名 import 该模块;\n\n对于更繁杂的目录结构和业务场景, 可通过修改这两个方法的规则来实现, 配置时要注意: 规则可以复杂, 要让传入的 actionStr 尽量简单; 配置 API 如下;\n\n### configure(type, option)\n现阶段 `configure` 所支持的配置项只有 `parser`, \n使用及默认配置如下:\n\n```\nimport {configure} from \'nearly`;\n\nconfigure(\'parser\', {\n    // 根据 :: 将字符串指令分割为 modName(模块名) 和 fnName(方法名);\n    nrSplit(actionStr) {\n        let [modName, fnName] = actionStr.split(\'::\');\n        return {modName, fnName};\n    },\n\n    // 根据获得的 modName 来 require 相应模块;\n    nrImport(modName) {\n        let realName = modName.split(\'#\')[0];\n        return require(`./actions/${realName}.js`);\n    }\n}\n```\n\n所以, 对于 `dispatch(\'counter::increment\')`, 执行步骤如下:\n\n1. 执行 `nrSplit(\'counter::increment\')` 得到 `{ modName: \'counter\', fnName: \'increment\' }`;\n2. 将得到的 `modName` 作为 key 生成 store 并缓存;(这一步对使用者来说是透明的, 说明是为了方便下文解释`nrImport`方法中对`#`号的处理);\n3. 再将得到的 `modName` 传入 `nrImport` 方法, 进而获得模块的引用;\n4. 获得的模块后, 根据 `fnName` 调用相应的 `ActionFunction`, 获得一个 `state`;\n5. 将得到的 `state` 传给相应的 `store`, 由 `store` 触发组件渲染;\n\n\n\n\n## Action File & Action Function\n\nAction File 和普通的 JS 并没有区别, 可以理解为一个普通 的 React 组件的 render 方法被放进了 /components 目录下, 而其余的数据操作被放进了 /actions 目录下的 Action File 里;\n\n### getState()\n等同于 `React.Component.getInitState`; 返回一个作为初始的 state 的对象;\n(注: 每个 Action Fils 中都需要 `export` 这个方法, 如果没有, 则初始 state 默认为 `{}`)\n\n### Action Function (prevState, args)\n1. Action Function 必须被 `export`;\n-  Action Function 接收的第一个参数为之前的 State, 其他参数可以是从 dispatch 中传入的参数;\n-  **Action Function 集成了对 Promise 的判断;** 你可以 return 一个 PlainObject, 也可以 return 一个 Promise 对象, 再在 then 方法里 return 真正的 state;\n(**注:** 这里是弱判断, 只要返回的对象里有 then 方法就行, 所以也可以用 jQuery 的 Deffered 代替 Promise);\n-  **如果直接返回 `prevState` 会报错, 如果希望`dispatch`不触发`render`, 请返回`null`;**\n\n示例如下: \n> path: /actions/counter.js\n\n```js\n\n// 获得初始 state\nexport function getState() {\n    return {\n        count: 0\n    };\n}\n\n// 加一 action\nexport function increment(prevState) {\n    return {\n        count: prevState.count + 1\n    };\n}\n\n// 减一 action\nexport function decrement(prevState) {\n    return {\n        count: prevState.count - 1\n   };\n}\n\n// 直接更新 action\nexport function update(prevState, count) {\n    return { count };\n}\n\n```\n\n## connect(component, actionFile)\nconnect 是个高阶组件, 作用是连接组件和 action 成为一个新的组件;\n参数 Component 是组件;\n参数 actionFile 是一个字符串;\n\n调用这个方法后, \n调用这个方法后会返回一个组件, 组件的 props.__action 为 actionPath, 后面再对这个方法详细描述;\n\n\n### 不同组件使用同一 store\n在业务中我们经常会碰到两个组件依赖同一个数据, 但两个组件结构上无法直接传递方法; (比如说在组件A中展示用户列表, 但在组件B中展示B的业务逻辑外还要展示A的用户的数量);\n如果使用 redux 我们只需对两个组件使用同一个 reducer 即可;\n如果使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 store, 只要传入 connect 的 actionFile 是相同的即可;\n\n```js\n\n// UserList.js\nfunction UserList(props) {\n    return (\n        <ul>\n            {props.list.map((v) => {\n                return <li>{v.id} | {v.name}</li>\n            })}\n        </ul>\n    )\n}\n\nexport default connect(UserList, \'userlist\');\n\n\n// UserNum.js\nfunction UserNum(props) {\n    return <div>{props.list.length}</div>\n}\n\nexport default connect(UserNum, \'userlist\');\n```\n\n### 同一组件使用不同 store\n我们开发通用组件时会需要给同一组件绑定不同 store 以复用(如适用于不同场景的弹窗); 如果用 redux 则需要在 reducer中处理来自参数里的 id, 在 Nearly 的处理方式则更简单; \n\n```js\n\n// Dialog.js\nfunction Dialog (props){\n    // ...\n}\n\nexport default Dialog;\n\n\n\n// successDialog.js\n\nimport Dialog from \'Dialog.js\';\n\nlet SuccessDialog = connect(Dialog, \'dialog#success\');\n// 关闭弹窗\n// dispatch(\'dialog#success::close\');\n\n\n\n// failDialog.js\n\nimport Dialog from \'Dialog.js\';\n\nlet FailDialog = connect(Dialog, \'dialog#fail\');\n// 关闭弹窗\n// dispatch(\'dialog#fail::close\');\n```\n\n\n## Tips\n\n1. 没有 afterDispatch 方法, 如果确实需要, 可以通过生命周期方法实现;\n2. 分类目录结构和特征目录结构Nearly都能适应, 取决于开发者制定的规则;\n3. 更推荐使用 stateless component, 除非需要生命周期方法;\n4. 在 example/todomvc 中只使用了 actions 和 components 目录, 但对于更复杂的数据操作, 应该有个 models目录, 毕竟现在更推荐 [SAM](http://sam.js.org/) 模式;\n5. 使用Nearly时配置 Hot Replacement 十分简单, 请参考 example/todomvc;\n\n\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: 'b3f7863b3dd6cf55a0d2ec40e2e5b574eb5e2839',
+21 silly publish   _id: 'nearly@1.0.0',
+21 silly publish   _shasum: '9a92575903a58b6efcce357ca623254c8ace82d7',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name nearly
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'nearly',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   name: 'nearly',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/nearly
+28 verbose publish registryBase https://registry.npmjs.org/
+29 silly publish uploading /Users/baidu/.npm/nearly/1.0.0/package.tgz
+30 verbose request uri https://registry.npmjs.org/nearly
+31 verbose request sending authorization for write operation
+32 info attempt registry request try #1 at 19:24:35
+33 verbose request using bearer token for auth
+34 verbose request id ee8867cb1eaf40d3
+35 http request PUT https://registry.npmjs.org/nearly
+36 http 403 https://registry.npmjs.org/nearly
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '95',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Tue, 09 Aug 2016 11:24:35 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-itm7426-ITM',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1470741874.713015,VS0,VE889',
+37 verbose headers   vary: 'Accept-Encoding' }
+38 verbose request invalidating /Users/baidu/.npm/registry.npmjs.org/nearly on PUT
+39 error publish Failed PUT 403
+40 verbose stack Error: "You cannot publish over the previously published version 1.0.0." : nearly
+40 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+40 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+40 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:200:22)
+40 verbose stack     at emitTwo (events.js:106:13)
+40 verbose stack     at Request.emit (events.js:191:7)
+40 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1067:10)
+40 verbose stack     at emitOne (events.js:101:20)
+40 verbose stack     at Request.emit (events.js:188:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:988:12)
+41 verbose statusCode 403
+42 verbose pkgid nearly
+43 verbose cwd /Users/baidu/project/nearly
+44 error Darwin 15.6.0
+45 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+46 error node v6.2.0
+47 error npm  v3.8.9
+48 error code E403
+49 error "You cannot publish over the previously published version 1.0.0." : nearly
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]
