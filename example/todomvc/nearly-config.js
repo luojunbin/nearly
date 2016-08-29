@@ -12,4 +12,4 @@ function getMod(modName) {
     return require(`./actions/${realName}.js`);
 }
 
-export default configure({nrSplit, getMod});
+export default configure('parser', {nrSplit, getMod});
