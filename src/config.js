@@ -6,7 +6,7 @@ let parser = {
         return {modName, fnName};
     },
 
-    getMod(modName) {
+    nrImport(modName) {
         let realName = modName.split('#')[0];
 
         return require(`./${realName}.js`);

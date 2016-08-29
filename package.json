@@ -1,6 +1,6 @@
 {
     "name": "nearly",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "A light and powerful data flow with React",
     "scripts": {
         "build": "NODE_ENV=production webpack && babel src --out-dir lib"

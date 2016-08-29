@@ -9,7 +9,7 @@ export function dispatch(path, ...args) {
 
     let {modName, fnName} = config.parser.nrSplit(path);
 
-    let mod = config.parser.getMod(modName);
+    let mod = config.parser.nrImport(modName);
 
     let store = getStore(modName);
 
