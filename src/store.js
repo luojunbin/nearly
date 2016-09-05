@@ -1,22 +1,21 @@
-// 不能直接导出内部的方法, 这些方法会被改变
-import {config} from './config';
+import {parser} from './config';
 
 class Store {
 
     constructor(modName) {
-        let mod = config.parser.nrImport(modName);
+        let mod = parser.nrImport(modName);
 
         this.state = mod.getState ? mod.getState() : {};
 
-        this.renders = [];
+        this.components = [];
     }
 
     subscribe(component) {
-        this.renders.push(component);
+        this.components.push(component);
     }
 
     unsubscribe(component) {
-        this.renders = this.renders.filter(v => v !== component);
+        this.components = this.components.filter(v => v !== component);
     }
 
     dispatch(state) {
@@ -27,7 +26,7 @@ class Store {
 
         if (state !== null) {
             this.state = {...this.state, ...state};
-            this.renders.forEach(v => v.setState(this.state));
+            this.components.forEach(v => v.setState(this.state));
         }
 
         return this.state;

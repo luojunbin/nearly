@@ -20,7 +20,6 @@
     "url": "https://github.com/luojunbin/nearly/issues"
   },
   "dependencies": {
-    "babel-polyfill": "^6.3.14",
     "classnames": "^2.2.5",
     "nearly": "^1.0.0",
     "react": "^0.14.7",

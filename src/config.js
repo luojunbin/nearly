@@ -1,5 +1,5 @@
 
-let parser = {
+export let parser = {
     nrSplit(str) {
         let [modName, fnName] = str.split('::');
 
@@ -10,8 +10,15 @@ let parser = {
         let realName = modName.split('#')[0];
 
         return require(`./${realName}.js`);
+    },
+
+    nrGet(mod, functionName) {
+        if (mod[functionName]) {
+            return mod[functionName];
+        }
+        throw Error(`the module does not export function ${functionName}`);
     }
-}
+};
 
 export let config = {parser};
 
@@ -20,7 +27,9 @@ export function configure(type, opt) {
         throw Error(`configure does not supports ${type}`);
     }
 
-    config[type] = {...config[type], ...opt};
+    for (let key in opt) {
+        config[type].hasOwnProperty(key) && (config[type][key] = opt[key]);
+    }
 }
 
 
