@@ -16,10 +16,9 @@
     "url": "https://github.com/luojunbin/nearly/issues"
   },
   "homepage": "https://github.com/luojunbin/nearly",
-  "dependencies": {
-    "babel-plugin-transform-object-rest-spread": "^6.8.0",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.3.15",
@@ -37,7 +36,10 @@
     "express": "^4.13.3",
     "mocha": "^2.2.5",
     "node-libs-browser": "^0.5.2",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "react-addons-test-utils": "^0.14.7",
+    "react": "^0.14.0 || ^15.0.0",
+    "react-dom": "^0.14.0 || ^15.0.0",
     "webpack": "^1.9.11"
   }
 }
