@@ -12,10 +12,16 @@ export let parser = {
         return require(`./${realName}.js`);
     },
 
-    nrGet(mod, functionName) {
+    nrTarget(mod, functionName) {
         if (mod[functionName]) {
             return mod[functionName];
         }
+
+        switch (functionName) {
+            case 'testState':
+                return (prevState, state) => state;
+        }
+
         throw Error(`the module does not export function ${functionName}`);
     }
 };

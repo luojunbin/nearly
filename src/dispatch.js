@@ -13,7 +13,7 @@ export function dispatch(path, ...args) {
 
     let store = getStore(modName);
 
-    let state = parser.nrGet(mod, fnName).apply(mod, [store.state, ...args]);
+    let state = parser.nrTarget(mod, fnName).apply(mod, [store.state, ...args]);
 
     if (isPromise(state)) {
         return state.then(function (stateAsync) {
