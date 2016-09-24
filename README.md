@@ -32,8 +32,8 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 
 
 ## 示例
-[TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)
-Counter(下面的示例代码)
+[TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)    
+[Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)(下面的示例代码)    
 React-SPA-Template(基于 nearly 的SPA项目模板)
 
 ## 使用
@@ -81,6 +81,7 @@ export function add(prevState, step) {
  * @file 木偶组件, 将与 /actions/counter.js 组合
  */
 
+import React from 'react';
 import {connect, dispatch} from 'nearly';
 
 // 'counter::add' 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法
@@ -91,9 +92,9 @@ let decr = () => dispatch('counter::add', -1);
 function Counter(props) {
     return (
         <div>
-            <a href="#" onClick={incr}> - </a>
+            <button onClick={incr}> - </button>
             <span>{props.count}</span>
-            <a href="#" onClick={decr}> + </a>
+            <button onClick={decr}> + </button>
         </div>
     )
 }
@@ -140,7 +141,7 @@ configure('parser', {
         // 根据模块名, 去 actions 目录下引用相应模块
         return require(`./actions/${realName}.js`);
     }
-}
+});
 ```
 
 ## API
@@ -275,7 +276,7 @@ let FailDialog = connect(Dialog, 'dialog#fail');
 
 1. 没有提供 `afterDispatch` 等方法, 如果确实需要, 可以通过生命周期方法实现;
 2. 分类目录结构和特征目录结构 Nearly 都能适应, 取决于开发者对 Nearly 的配置;
-3. 更推荐使用 stateless component, 除非需要生命周期方法;
+3. 更推荐使用 `stateless component`, 除非需要生命周期方法;
 
 
 
