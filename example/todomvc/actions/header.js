@@ -1,5 +1,5 @@
 
-export function getState() {
+export function initState() {
     return {
         text: ''
     };
@@ -11,7 +11,7 @@ export function reset() {
     };
 }
 
-export function setText(prevState, text) {
+export function setText(getState, text) {
     return {text};
 }
 

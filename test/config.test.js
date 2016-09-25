@@ -4,7 +4,7 @@ import {expect} from 'chai';
 
 import {configure, parser} from '../src/config';
 
-let {nrSplit, nrImport, nrGet} = parser;
+let {nrSplit, nrImport, nrTarget} = parser;
 
 describe('configure test', () => {
     it('parser configuration should be in effect', () => {

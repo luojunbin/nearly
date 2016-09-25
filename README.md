@@ -17,7 +17,7 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 -  API 更加简单, 在业务中一般只会用到 `connect` 和 `dispatch` 方法, 你甚至不需要了解 flux;
 -  更轻量, min 后只有 5K;
 
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow-min.png?raw=true)
+<!--![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow-min.png?raw=true)-->
 
 ### Parser
 传入的 `action` 通过 `Parser` 解析后, 会命中某个文件上的某个方法, 该方法即为 `Action Funciton`, 所在的文件即 `Action File`;
@@ -25,7 +25,7 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 ### Action File & Action Function
 
 1. `Action File` 即普通的 js 文件, 该文件所 `export` 的方法即为 `Action Function`;
-- `Action File`必须 `export` 一个 `getState` 方法,  该方法返回的对象将作为组件的初始状态;
+- `Action File`必须 `export` 一个 `initState` 方法,  该方法返回的对象将作为组件的初始状态;
 - `Action Function` 返回的状态将传给组件的 `props`;
 - `Action Function` 返回 `null` 时, 将不触发组件的 `render`;
 - **Action Function 集成了对 Promise 的判断;** 你可以 return 一个 PlainObject, 也可以 return 一个 Promise/Deffered 对象, 再在 then 方法里 return 真正的 state;
@@ -34,7 +34,7 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 ## 示例
 [TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)    
 [Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)(下面的示例代码)    
-React-SPA-Template(基于 nearly 的SPA项目模板)
+~~React-SPA-Template(基于 nearly 的SPA项目模板)~~
 
 ## 使用
 
@@ -59,17 +59,17 @@ React-SPA-Template(基于 nearly 的SPA项目模板)
  */
 
 // 返回初始 state, 这个方法是必须的
-export function getState() {
+export function initState() {
     return {
         count: 0
     };
 }
 
-// Action Function 接收的第一个参数为 prevState
+// Action Function 接收的第一个参数为 getState 方法
 // 其余参数是 dispatch 方法中传入的参数
-export function add(prevState, step) {
+export function add(getState, step) {
     return {
-        count: prevState.count + step
+        count: getState().count + step
     };
 }
 ```
@@ -162,11 +162,11 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 
 ### configure(type, option)
 现阶段 `configure` 所支持的配置项只有 `parser`;
-`parser` 中可供配置的方法有 `nrSplit`, `nrImport`, `nrTarget`;
-其中,
-`nrSplit` 用于将`action`分割为模块名和方法名;
-`nrImport` 用于根据模块名去 `require` 相应的模块;
-`nrTarget` 用于根据模块和方法名获得相应的方法;
+`parser` 中可供配置的方法有 `nrSplit`, `nrImport`, `nrTarget`;   
+其中,   
+`nrSplit` 用于将`action`分割为模块名和方法名;   
+`nrImport` 用于根据模块名去 `require` 相应的模块;   
+`nrTarget` 用于根据模块和方法名获得相应的方法;   
 
 默认配置及拓展点如下:
 
@@ -198,7 +198,7 @@ configure('parser', {
         // 拓展点: 模块中没有这个方法时, 根据返回一个默认的方法;
         switch (functionName) {
             case 'testState':
-                return (prevState, state) => state;
+                return (getState, state) => state;
         }
 
         throw Error(`the module does not export function ${functionName}`);
@@ -207,10 +207,7 @@ configure('parser', {
 ```
 
 ## connect(Component, ActionFileName)
-connect 是个高阶组件, 作用是连接组件和 `Action File` 成为一个新的组件;
-
-调用这个方法后会返回一个组件, 组件的 props.__action 为 `ActionFileName`, 后面再对这个方法详细描述;
-
+connect 将 `Component` 和 `Action File` 组合, 并返回一个新的组件;
 
 ### 不同组件使用同一 store
 在业务中我们经常会碰到两个组件依赖同一个数据源, 但两个组件难以通过父级传递数据;
@@ -222,7 +219,7 @@ connect 是个高阶组件, 作用是连接组件和 `Action File` 成为一个�
 // 应用场景: 在 UserList.js 中展示用户列表, 在 UserNum.js 中用户的数量, 而两个组件难以通过父级传递数据;
 
 // UserList.js
-function UserList(props) {
+function UserList(props) {  
     return (
         <ul>
             {props.list.map((v) => {
@@ -270,7 +267,7 @@ let FailDialog = connect(Dialog, 'dialog#fail');
 // 关闭弹窗
 // dispatch('dialog#fail::close');
 ```
-
+注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props.AFN` 来确定 `ActionFileName`;
 
 ## Tips
 

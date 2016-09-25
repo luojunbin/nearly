@@ -3,16 +3,16 @@
  */
 
 // 返回初始 state, 这个方法是必须的
-export function getState() {
+export function initState() {
     return {
         count: 0
     };
 }
 
-// Action Function 接收的第一个参数为 prevState
+// Action Function 接收的第一个参数为 getState 方法
 // 其余参数是 dispatch 方法中传入的参数
-export function add(prevState, step) {
+export function add(getState, step) {
     return {
-        count: prevState.count + step
+        count: getState().count + step
     };
 }

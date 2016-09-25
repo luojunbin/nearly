@@ -2,9 +2,9 @@ import React from 'react';
 import {createStore} from './store';
 import {getComponentName} from './utils';
 
-export default function connect(Component, storeName) {
+export default function connect(Component, actionFileName) {
 
-    let store = createStore(storeName);
+    let store = createStore(actionFileName);
 
     class Provider extends React.Component {
 
@@ -22,11 +22,11 @@ export default function connect(Component, storeName) {
         }
 
         render() {
-            return <Component {...this.state} __action={storeName} {...this.props} />;
+            return <Component {...this.state} AFN={actionFileName} {...this.props} />;
         }
     }
 
-    Provider.displayName = `${getComponentName(Component)}-${storeName}`;
+    Provider.displayName = `${getComponentName(Component)}-${actionFileName}`;
 
     return Provider;
 }

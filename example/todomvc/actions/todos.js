@@ -7,7 +7,7 @@ const ITEM_MODEL = {
     text: 'defualt text'
 };
 
-export function getState() {
+export function initState() {
 
     return {
         editing: -1,
@@ -16,24 +16,24 @@ export function getState() {
     };
 }
 
-export function add(prevState, text) {
+export function add(getState, text) {
 
     let uid = createId();
 
-    let list = [...prevState.list, {...ITEM_MODEL, text, uid}];
+    let list = [...getState().list, {...ITEM_MODEL, text, uid}];
 
     return {list};
 }
 
-export function del(prevState, uid) {
-    let list = prevState.list.filter(v => v.uid !== uid);
+export function del(getState, uid) {
+    let list = getState().list.filter(v => v.uid !== uid);
 
     return {list};
 }
 
-export function toggle(prevState, uid) {
+export function toggle(getState, uid) {
 
-    let list = prevState.list.map(v => {
+    let list = getState().list.map(v => {
         if (v.uid === uid) {
             let isCompleted = !v.isCompleted;
 
@@ -46,23 +46,23 @@ export function toggle(prevState, uid) {
     return {list};
 }
 
-export function toggleAll(prevState, isCompleted) {
+export function toggleAll(getState, isCompleted) {
 
-    let list = prevState.list.map(v => {
+    let list = getState().list.map(v => {
         return {...v, isCompleted}
     });
 
     return {list};
 }
 
-export function edit(prevState, uid) {
+export function edit(getState, uid) {
     return {
         editing: uid
     };
 }
 
-export function finishEdit(prevState, uid, text) {
-    let list = prevState.list.map(v => {
+export function finishEdit(getState, uid, text) {
+    let list = getState().list.map(v => {
         return v.uid === uid
             ? {...v, text}
             : v;
@@ -74,13 +74,13 @@ export function finishEdit(prevState, uid, text) {
     };
 }
 
-export function changeFilter(prevState, filter) {
+export function changeFilter(getState, filter) {
     return {filter};
 }
 
-export function clearCompleted(prevState) {
+export function clearCompleted(getState) {
 
-    let list = prevState.list.filter(v => !v.isCompleted);
+    let list = getState().list.filter(v => !v.isCompleted);
 
     return {list};
 }

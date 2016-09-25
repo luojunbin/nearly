@@ -5,9 +5,18 @@ class Store {
     constructor(modName) {
         let mod = parser.nrImport(modName);
 
-        this.state = mod.getState ? mod.getState() : {};
+        if (typeof mod.initState !== 'function') {
+            throw Error(`'initState' of Action file ${modName} does not exist`);
+        }
+
+        this.state = mod.initState();
 
         this.components = [];
+        this.getState = this.getState.bind(this);
+    }
+
+    getState() {
+        return {...this.state};
     }
 
     subscribe(component) {
@@ -19,11 +28,6 @@ class Store {
     }
 
     dispatch(state) {
-
-        if (state === this.state) {
-            throw Error('must not modify origin state, if you change nothing, please return {} or null');
-        }
-
         if (state !== null) {
             this.state = {...this.state, ...state};
             this.components.forEach(v => v.setState(this.state));
@@ -31,7 +35,6 @@ class Store {
 
         return this.state;
     }
-
 }
 
 export let storeCache = {};

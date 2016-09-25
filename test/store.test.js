@@ -4,10 +4,7 @@ import {expect} from 'chai';
 import {createStore, storeCache} from '../src/store';
 import {configure, parser} from '../src/config';
 
-let {nrSplit, nrImport, nrGet} = parser;
-
-
-
+let {nrSplit, nrImport, nrTarget} = parser;
 
 describe('store subscribe unsubscribe test', () => {
 
@@ -25,39 +22,32 @@ describe('store subscribe unsubscribe test', () => {
         expect(createStore(store_name)).to.equal(createStore(store_name));
     });
 
-    it('store.state should equal to "getState()"', () => {
+    const storeName = 'test_initState';
 
-        const storeName = 'test_getState';
+    const EXAMPLE_STATE = {
+        test: 1
+    };
 
-        const EXAMPLE_STATE = {
-            test: 1
-        };
-
-        configure('parser', {
-            nrImport() {
-                return {
-                    getState() {
-                        return EXAMPLE_STATE;
-                    }
-                };
-            }
-        });
-
+    configure('parser', {
+        nrImport() {
+            return {
+                initState() {
+                    return EXAMPLE_STATE;
+                }
+            };
+        }
     });
 
-    it('store.state should equal to "{}" if the module does not have "getState"', () => {
+    it('store.getState() should not equal to "initState()"', () => {
+        expect(createStore(store_name).getState()).to.not.equal(EXAMPLE_STATE);
+    });
 
-        const storeName = 'test_not_getState';
+    it('store.getState() should deep equal to "initState()"', () => {
+        expect(createStore(store_name).getState()).to.deep.equal(EXAMPLE_STATE);
+    });
 
-        configure('parser', {
-            nrImport() {
-                return {};
-            }
-        });
-
-        let store = createStore(storeName);
-        expect(store.state).to.deep.equal({});
-
+    it('store.getState() should not equal to store.getState()', () => {
+        expect(createStore(store_name).getState()).to.deep.equal(createStore(store_name).getState());
     });
 
 });

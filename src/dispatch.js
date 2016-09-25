@@ -5,23 +5,18 @@ import {getStore} from './store';
 
 import {isPromise} from './utils';
 
-export function dispatch(path, ...args) {
-
-    let {modName, fnName} = parser.nrSplit(path);
+export function dispatch(action, ...args) {
+    let {modName, fnName} = parser.nrSplit(action);
 
     let mod = parser.nrImport(modName);
 
     let store = getStore(modName);
 
-    let state = parser.nrTarget(mod, fnName).apply(mod, [store.state, ...args]);
+    let state = parser.nrTarget(mod, fnName).apply(mod, [store.getState, ...args]);
 
-    if (isPromise(state)) {
-        return state.then(function (stateAsync) {
-            return store.dispatch(stateAsync);
-        });
-    }
-
-    return store.dispatch(state);
+    return isPromise(state)
+        ? state.then(stateAsync => store.dispatch(stateAsync))
+        : store.dispatch(state);
 }
 
 export function dispatcher(...args) {
