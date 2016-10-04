@@ -17,7 +17,7 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 -  API 更加简单, 在业务中一般只会用到 `connect` 和 `dispatch` 方法, 你甚至不需要了解 flux;
 -  更轻量, min 后只有 5K;
 
-<!--![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow-min.png?raw=true)-->
+![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow-min.png?raw=true)
 
 ### Parser
 传入的 `action` 通过 `Parser` 解析后, 会命中某个文件上的某个方法, 该方法即为 `Action Funciton`, 所在的文件即 `Action File`;
