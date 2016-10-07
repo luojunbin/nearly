@@ -6,6 +6,12 @@
     "build": "NODE_ENV=production webpack && ./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register ./test"
   },
+  "keywords": [
+    "data flow",
+    "react",
+    "light",
+    "direction"
+  ],
   "main": "lib/index.js",
   "repository": {
     "type": "git",
