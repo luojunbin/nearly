@@ -22,7 +22,13 @@ export default function connect(Component, actionFileName) {
         }
 
         render() {
-            return <Component {...this.state} AFN={actionFileName} {...this.props} />;
+            // return <Component {...this.state} AFN={actionFileName} {...this.props} />;
+
+            return React.createElement(Component, {
+                ...this.state,
+                AFN: actionFileName,
+                ...this.props
+            });
         }
     }
 
