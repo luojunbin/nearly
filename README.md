@@ -168,7 +168,7 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 `nrImport` 用于根据模块名去 `require` 相应的模块;   
 `nrTarget` 用于根据模块和方法名获得相应的方法;   
  如图:
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config.png?raw=true)
+![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config-min.png?raw=true)
 
 
 默认配置及拓展点如下:
