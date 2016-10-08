@@ -147,7 +147,7 @@ configure('parser', {
 ## API
 
 ### dispatch(action: string, ...args)
-dispatch 会根据 `action` 找到相应的方法, `args` 可以有多个, 并将 args 作为参数传入, 将方法返回的结果传给 render 方法;
+dispatch 会根据 `action` 找到相应的方法, `args` 可以有多个, 并将 args 作为参数传入, 将方法返回的结果写入组件的 `props` 中;
 
 ### dispatcher(action: string, ...args)
 即 `dispatch` 的高阶函数; 例:
@@ -167,6 +167,9 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 `nrSplit` 用于将`action`分割为模块名和方法名;   
 `nrImport` 用于根据模块名去 `require` 相应的模块;   
 `nrTarget` 用于根据模块和方法名获得相应的方法;   
+ 如图:
+![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config.png?raw=true)
+
 
 默认配置及拓展点如下:
 
