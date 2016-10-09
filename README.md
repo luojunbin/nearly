@@ -33,7 +33,9 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 
 ## 示例
 [TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)    
-[Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)(下面的示例代码)    
+[Counter (下面的示例代码)](https://github.com/luojunbin/nearly/tree/master/example/counter)    
+[Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)   
+[One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)   
 ~~React-SPA-Template(基于 nearly 的SPA项目模板)~~
 
 ## 使用
@@ -164,10 +166,11 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 现阶段 `configure` 所支持的配置项只有 `parser`;
 `parser` 中可供配置的方法有 `nrSplit`, `nrImport`, `nrTarget`;   
 其中,   
-`nrSplit` 用于将`action`分割为模块名和方法名;   
-`nrImport` 用于根据模块名去 `require` 相应的模块;   
-`nrTarget` 用于根据模块和方法名获得相应的方法;   
- 如图:
+`nrSplit` 将 `action` 分割为 `modName`(模块名) 和 `fnName`(方法名);   
+`nrImport` 根据 `modName` 去 `require` 相应的模块;   
+`nrTarget` 根据获得的模块和 `fnName` 获得相应的方法;   
+
+大体流程如下:
 ![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config-min.png?raw=true)
 
 
@@ -240,6 +243,8 @@ function UserNum(props) {
 }
 export default connect(UserNum, 'users');
 ```
+详见示例: [one-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
+
 
 ### 同一组件使用不同 store
 我们开发通用组件时会需要给同一组件绑定不同 `store` 以复用;  可以通过给 `ActionFileName` 加上 `#id` 来区分不同 `store`;
@@ -258,7 +263,7 @@ import Dialog from 'Dialog.js';
 
 let SuccessDialog = connect(Dialog, 'dialog#success');
 // 关闭弹窗
-// dispatch('dialog#success::close');
+dispatch('dialog#success::close');
 
 
 
@@ -268,9 +273,11 @@ import Dialog from 'Dialog.js';
 
 let FailDialog = connect(Dialog, 'dialog#fail');
 // 关闭弹窗
-// dispatch('dialog#fail::close');
+dispatch('dialog#fail::close');
 ```
 注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props.AFN` 来确定 `ActionFileName`;
+
+详见示例: [Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)
 
 ## Tips
 
