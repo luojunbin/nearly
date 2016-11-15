@@ -5,11 +5,11 @@ class Store {
     constructor(modName) {
         let mod = parser.nrImport(modName);
 
-        if (typeof mod.initState !== 'function') {
-            throw Error(`'initState' of Action file ${modName} does not exist`);
+        if (typeof mod.getState !== 'function') {
+            throw Error(`'getState' of Action file ${modName} does not exist`);
         }
 
-        this.state = mod.initState();
+        this.state = mod.getState();
 
         this.components = [];
         this.getState = this.getState.bind(this);

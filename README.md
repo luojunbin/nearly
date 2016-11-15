@@ -243,7 +243,7 @@ function UserNum(props) {
 }
 export default connect(UserNum, 'users');
 ```
-详见示例: [one-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
+详见示例: [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
 
 
 ### 同一组件使用不同 store
