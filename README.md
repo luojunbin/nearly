@@ -25,7 +25,7 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 ### Action File & Action Function
 
 1. `Action File` 即普通的 js 文件, 该文件所 `export` 的方法即为 `Action Function`;
-- `Action File`必须 `export` 一个 `getState` 方法,  该方法返回的对象将作为组件的初始状态;
+- `Action File`必须 `export` 一个 `getInitialState` 方法,  该方法返回的对象将作为组件的初始状态;
 - `Action Function` 返回的状态将传给组件的 `props`;
 - `Action Function` 返回 `null` 时, 将不触发组件的 `render`;
 - **Action Function 集成了对 Promise 的判断;** 你可以 return 一个 PlainObject, 也可以 return 一个 Promise/Deffered 对象, 再在 then 方法里 return 真正的 state;
@@ -61,7 +61,7 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
  */
 
 // 返回初始 state, 这个方法是必须的
-export function getState() {
+export function getInitialState() {
     return {
         count: 0
     };
