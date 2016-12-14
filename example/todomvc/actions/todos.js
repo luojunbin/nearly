@@ -7,7 +7,7 @@ const ITEM_MODEL = {
     text: 'defualt text'
 };
 
-export function initState() {
+export function getInitialState() {
 
     return {
         editing: -1,

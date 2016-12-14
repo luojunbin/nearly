@@ -3,7 +3,7 @@
  */
 
 // 返回初始 state, 这个方法是必须的
-export function initState() {
+export function getInitialState() {
     return {
         isHide: true,
         title: ''
