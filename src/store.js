@@ -1,22 +1,33 @@
 import {parser} from './config';
+import {isPromise} from './utils';
 
 class Store {
 
     constructor(modName) {
-        let mod = parser.nrImport(modName);
 
-        if (typeof mod.getInitialState !== 'function') {
-            throw Error(`'getInitialState' of Action file ${modName} does not exist`);
-        }
+        this.modName = modName;
 
-        this.state = mod.getInitialState();
-
+        this.state = null;
         this.components = [];
         this.getState = this.getState.bind(this);
     }
 
     getState() {
         return {...this.state};
+    }
+
+    init(component) {
+        let mod = parser.nrImport(this.modName);
+
+        if (typeof mod.getInitialState !== 'function') {
+            throw Error(`'getInitialState' of Action file ${modName} does not exist`);
+        }
+
+        let state = mod.getInitialState();
+
+        isPromise(state)
+        ? state.then(stateAsync => this.dispatch(stateAsync))
+        : component.state = this.state = state;
     }
 
     subscribe(component) {
@@ -40,7 +51,6 @@ class Store {
 export let storeCache = {};
 
 export function createStore(modName) {
-
     if (storeCache[modName]) {
         return storeCache[modName];
     }

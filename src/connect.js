@@ -2,7 +2,7 @@ import React from 'react';
 import {createStore} from './store';
 import {getComponentName} from './utils';
 
-export default function connect(Component, actionFileName) {
+export default function connect(actionFileName, Component, PlaceHolder) {
 
     let store = createStore(actionFileName);
 
@@ -10,7 +10,11 @@ export default function connect(Component, actionFileName) {
 
         constructor(props) {
             super(props);
-            this.state = store.state;
+            this.state = store.getState();
+        }
+
+        componentWillMount() {
+            store.init(this);
         }
 
         componentDidMount() {
@@ -22,7 +26,9 @@ export default function connect(Component, actionFileName) {
         }
 
         render() {
-            return React.createElement(Component, {
+            return store.isReady
+            ? (PlaceHolder ? false : React.createElement(PlaceHolder))
+            : React.createElement(Component, {
                 ...this.state,
                 AFN: actionFileName,
                 ...this.props
