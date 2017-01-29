@@ -1,45 +1,37 @@
 # Nearly
 
-一个简洁的数据流框架;
+一个简洁, 强大的数据流框架;
 
 ## 安装
 
 ```
-npm install --save nearly
+npm install --save nearly-react
 ```
 
-## 特点
-Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content), 如下特点:
+## 特性
 
-1. 增加了 **Paser** 和 **ActionFunction** 两个结构;
-- 对使用者屏蔽了 `Store` 的存在;
--  对 `state` 进行集中管理, 更像原始的 `React`;
--  API 更加简单, 在业务中一般只会用到 `connect` 和 `dispatch` 方法, 你甚至不需要了解 flux;
--  更轻量, min 后只有 5K;
+![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/flux-diagram-white-background.png)
 
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/data-flow-min.png?raw=true)
+上图为 [flux](http://facebook.github.io/flux/docs/overview.html#content) 架构图, Nearly 参考自 [flux](http://facebook.github.io/flux/docs/overview.html#content), 在其基础上做了以下简化和改进:
 
-### Parser
-传入的 `action` 通过 `Parser` 解析后, 会命中某个文件上的某个方法, 该方法即为 `Action Funciton`, 所在的文件即 `Action File`;
+架构上:
 
-### Action File & Action Function
+1. 以 JS 模块为单位创建 `Store`, 并对使用者屏蔽了 `Store` 的存在, 省略了手动创建 `Store` 的过程, ;
+- 将 JS 模块 `export` 的方法默认注册为 `Dispatcher`, 省略了手动注册 `Dispatcher` 的过程, ;
+- 在 `Dispatcher` 之上增加了 `Parser` 结构, 用于解析传入的具有约定结构的 `actions`, 使之映射到唯一的 `Store` 和 `Dispatcher`;
 
-1. `Action File` 即普通的 js 文件, 该文件所 `export` 的方法即为 `Action Function`;
-- `Action File`必须 `export` 一个 `getInitialState` 方法,  该方法返回的对象将作为组件的初始状态;
-- `Action Function` 返回的状态将传给组件的 `props`;
-- `Action Function` 返回 `null` 时, 将不触发组件的 `render`;
-- **Action Function 集成了对 Promise 的判断;** 你可以 return 一个 PlainObject, 也可以 return 一个 Promise/Deffered 对象, 再在 then 方法里 return 真正的 state;
+功能上:
 
+1. 集成 `Promise`, 你不再需要多写一个 `componentDidMount` 方法去异步获取数据, 对热衷于 `stateless component` 的人来说是个福音;
+-  `Store` 的使用更加灵活, 支持同一 `Store` 的单实例使用和多实例使用;
 
-## 示例
-[TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)    
-[Counter (下面的示例代码)](https://github.com/luojunbin/nearly/tree/master/example/counter)    
-[Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)   
-[One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)   
-~~React-SPA-Template(基于 nearly 的SPA项目模板)~~
+相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
 
-## 使用
+1. API 更加简洁, 在业务中一般只会用到 `connect` 和 `dispatch` 方法;
+-  对 `state` 进行集中管理, 写法与原始的 `React` 相似, 学习和迁移成本低;
+-  更轻量, min 后只有 6K;
 
+## 使用示例
 
 > 目录结构
 
@@ -57,17 +49,17 @@ Nearly 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content),
 
 ```
 /**
- * @file Action File, 将与 /components/Counter.js 组合
+ * @file Dispatcher File, 将与 /components/Counter.js 组合
  */
 
-// 返回初始 state, 这个方法是必须的
-export function getInitialState() {
+// 初始化 state, 这个方法将被隐式调用, required!
+export function init() {
     return {
         count: 0
     };
 }
 
-// Action Function 接收的第一个参数为 getState 方法
+// Dispatcher 方法接收的第一个参数为 getState 方法
 // 其余参数是 dispatch 方法中传入的参数
 export function add(getState, step) {
     return {
@@ -90,7 +82,6 @@ import {connect, dispatch} from 'nearly';
 let incr = () => dispatch('counter::add', 1);
 let decr = () => dispatch('counter::add', -1);
 
-// 更推荐使用 stateless component, 除非需要生命周期方法
 function Counter(props) {
     return (
         <div>
@@ -101,7 +92,7 @@ function Counter(props) {
     )
 }
 
-// 'counter' 经过 Parser 解析后会得到 /actions/counter.js 的引用
+// 'counter' 经过 Parser 解析后会得到 /actions/counter.js 模块
 // connect 方法将 Counter 组件与 /actions/counter.js 组合, 生成一个新的组件
 export default connect(Counter, 'counter');
 ```
@@ -148,6 +139,9 @@ configure('parser', {
 
 ## API
 
+### connect(storeName: string, Component, [PlaceHolder])
+将 `Component` 和 `storeName` 组合, 返回一个新的组件; 其中 `storeName` 将被 `Parser` 的 `nrImport` 方法解析, 得到相应的 JS 模块; `PlaceHolder` 为默认展示组件, 在 `Component` 被插入 dom 之前会先展示 `PlaceHolder` 组件, 可用于 loading 之类的效果;
+
 ### dispatch(action: string, ...args)
 dispatch 会根据 `action` 找到相应的方法, `args` 可以有多个, 并将 args 作为参数传入, 将方法返回的结果写入组件的 `props` 中;
 
@@ -163,15 +157,18 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 ```
 
 ### configure(type, option)
-现阶段 `configure` 所支持的配置项只有 `parser`;
-`parser` 中可供配置的方法有 `nrSplit`, `nrImport`, `nrTarget`;   
-其中,   
-`nrSplit` 将 `action` 分割为 `modName`(模块名) 和 `fnName`(方法名);   
-`nrImport` 根据 `modName` 去 `require` 相应的模块;   
-`nrTarget` 根据获得的模块和 `fnName` 获得相应的方法;   
+现阶段 `Nearly` 只支持对 `parser` 的配置, 通过合理的配置, 分类目录结构和特征目录结构 `Nearly` 都能适应;
+
+`parser` 中可供配置的方法有 `nrSplit`, `nrImport`, `nrTarget`, 其中,
+
+- `nrSplit` 将 `action` 分割为 `modName`(模块名) 和 `fnName`(方法名);
+- `nrImport` 根据 `modName` 去 `require` 相应的模块;
+- `nrTarget` 根据获得的模块和 `fnName` 获得相应的方法;
+
 
 大体流程如下:
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config-min.png?raw=true)
+
+![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config-min.png)
 
 
 默认配置及拓展点如下:
@@ -181,15 +178,15 @@ import {configure} from 'nearly`;
 
 // 默认配置如下
 configure('parser', {
-    // 根据 :: 将字符串指令分割为 modName(模块名) 和 fnName(方法名);
-    nrSplit(actionStr) {
-        let [modName, fnName] = actionStr.split('::');
+    // 根据 :: 将 action 分割为 modName(模块名) 和 fnName(方法名); 
+    nrSplit(action) {
+        let [modName, fnName] = action.split('::');
         return {modName, fnName};
     },
 
     // 根据获得的 modName 去指定路径下 require 相应模块;
     nrImport(modName) {
-        // 拓展点: 这里的对 '#' 操作的作用下面会讲
+        // '#' 的作用下面会讲
         let realName = modName.split('#')[0];
         return require(`./actions/${realName}.js`);
     },
@@ -201,7 +198,7 @@ configure('parser', {
             return mod[functionName];
         }
 
-        // 拓展点: 模块中没有这个方法时, 根据返回一个默认的方法;
+        // 默认的 Dispatcher;
         switch (functionName) {
             case 'testState':
                 return (getState, state) => state;
@@ -212,78 +209,97 @@ configure('parser', {
 }
 ```
 
-## connect(Component, ActionFileName)
-connect 将 `Component` 和 `Action File` 组合, 并返回一个新的组件;
+## 进阶使用
 
-### 不同组件使用同一 store
+### 在 Dispatcher 方法中使用 Promise
+需要声明的是: 在 Nearly 中对 `Promise` 的判断是不完全的(只要有 `then` 方法均认为是 `Promise` 实例, This is a  feature!), 一方面是因为 Nearly 中只使用了 `then` 方法, 另一方面是为了兼容 `$.Deferred`;
+
+以上面的 Counter 的例子做修改:
+
+> /actions/counter.js 异步版本
+
+```
+/**
+ * @file Dispatcher File, 将与 /components/Counter.js 组合
+ */
+
+// 初始化 state, 这个方法将被隐式调用, required!
+export function init() {
+    return fetch('./test.json').then(res => res.json());
+}
+
+// getState 方法返回的永远是最新的 state
+export function add(getState, step) {
+    new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                count: getState().count + step
+            });
+        }, 1000);
+    });
+}
+```
+
+### 同一 Store 单实例使用
 在业务中我们经常会碰到两个组件依赖同一个数据源, 但两个组件难以通过父级传递数据;
 
-使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `store`, 只要传入 `connect` 的 `ActionFileName` 是相同的即可;
-例:
+使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
+例: 简单的数据输入同步
 
 ```js
-// 应用场景: 在 UserList.js 中展示用户列表, 在 UserNum.js 中用户的数量, 而两个组件难以通过父级传递数据;
+// /actions/value.js
+...
 
-// UserList.js
-function UserList(props) {  
+// Input.js
+function Input(props) {
     return (
-        <ul>
-            {props.list.map((v) => {
-                return <li key={v.id}>{v.name}</li>
-            })}
-        </ul>
+        <input className="form-control" value={props.value} onChange={change} />
     )
 }
-export default connect(UserList, 'users');
+export default connect(Input, 'value');
 
 
-// UserNum.js
-function UserNum(props) {
-    return <div>{props.list.length}</div>
+// Text.js
+function Text(props) {
+    return (
+        <h2>{props.value}</h2>
+    )
 }
-export default connect(UserNum, 'users');
+export default connect(Text, 'value');
 ```
 详见示例: [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
 
 
-### 同一组件使用不同 store
-我们开发通用组件时会需要给同一组件绑定不同 `store` 以复用;  可以通过给 `ActionFileName` 加上 `#id` 来区分不同 `store`;
+### 同一 Store 多实例使用
+我们开发通用组件时会需要给同一组件绑定同一 `store` 的不同实例以复用;  可以通过给 `storeName` 加上 `#id` 来区分不同 `Store`;
 
 ```js
-// 应用场景: 如适用于不同场景的弹窗
 // Dialog.js
 export default function Dialog (props){
     return <div>{props.content}</div>
 }
 
+let DialogA = connect(Dialog, 'dialog#a');
+let DialogB = connect(Dialog, 'dialog#b');
 
-// SuccessDialog.js
-
-import Dialog from 'Dialog.js';
-
-let SuccessDialog = connect(Dialog, 'dialog#success');
-// 关闭弹窗
-dispatch('dialog#success::close');
-
-
-
-// FailDialog.js
-
-import Dialog from 'Dialog.js';
-
-let FailDialog = connect(Dialog, 'dialog#fail');
-// 关闭弹窗
-dispatch('dialog#fail::close');
+// 关闭弹窗 A
+dispatch('dialog#a::close');
+// 关闭弹窗 B
+dispatch('dialog#b::close');
 ```
-注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props.AFN` 来确定 `ActionFileName`;
+注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props._storeName` 来确定 `storeName`;
 
 详见示例: [Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)
 
-## Tips
 
-1. 没有提供 `afterDispatch` 等方法, 如果确实需要, 可以通过生命周期方法实现;
-2. 分类目录结构和特征目录结构 Nearly 都能适应, 取决于开发者对 Nearly 的配置;
-3. 更推荐使用 `stateless component`, 除非需要生命周期方法;
+## 示例
+[TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)    
+[Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)    
+[Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)   
+[One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)   
+~~React-SPA-Template(基于 nearly 的SPA项目模板)~~
+
+
 
 
 
