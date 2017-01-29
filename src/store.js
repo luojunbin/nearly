@@ -20,7 +20,7 @@ class Store {
         let mod = parser.nrImport(this.modName);
 
         if (typeof mod.init !== 'function') {
-            throw Error(`'init' of Action file ${modName} does not exist`);
+            throw Error(`'init' of Action file ${this.modName} does not exist`);
         }
 
         let state = mod.init();
