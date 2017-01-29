@@ -1,7 +1,7 @@
 
 import React, {PropTypes} from 'react';
 
-import {dispatch, connect, createStore} from 'nearly';
+import {dispatch, connect, createStore} from 'nearly-react';
 
 const ENTER_KEY = 13;
 
@@ -43,5 +43,5 @@ Header.propTypes = {
     text: PropTypes.string.isRequired
 }
 
-export default connect(Header, 'header');
+export default connect('header', Header);
 

@@ -7,13 +7,17 @@ const ITEM_MODEL = {
     text: 'defualt text'
 };
 
-export function getInitialState() {
+export function init() {
 
-    return {
-        editing: -1,
-        filter: getHash(),
-        list: JSON.parse(localStorage.getItem('todo-data')) || []
-    };
+    return new Promise(function (resolve, reject) {
+        setTimeout(() => {
+            resolve({
+                editing: -1,
+                filter: getHash(),
+                list: JSON.parse(localStorage.getItem('todo-data')) || []
+            });
+        }, 2000);
+    });
 }
 
 export function add(getState, text) {

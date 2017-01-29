@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import {connect, dispatch} from 'nearly';
+import {connect, dispatch} from 'nearly-react';
 
 // 'counter::add' 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法
 let incr = () => dispatch('counter::add', 1);
@@ -22,4 +22,4 @@ function Counter(props) {
 
 // 'counter' 经过 Parser 解析后会得到 /actions/counter.js 的引用
 // connect 方法将 Counter 组件与 /actions/counter.js 组合, 生成一个新的组件
-export default connect(Counter, 'counter');
+export default connect('counter', Counter);

@@ -2,7 +2,7 @@
  * @file 配置 nearly
  */
 
-import {configure} from 'nearly';
+import {configure} from 'nearly-react';
 
 // 可供配置的方法有 nrSplit, nrImport 和 nrTarget
 // 这里只配置 nrImport, 其余两个使用默认配置

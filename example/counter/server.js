@@ -12,7 +12,7 @@ var compiler = webpack(config);
 
 var server = new webpackDevServer(compiler, {
     hot: true,
-    stats: { 
+    stats: {
         colors: true
     },
     compress: true,

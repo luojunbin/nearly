@@ -4,7 +4,7 @@ import React from 'react';
 
 // import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-import {dispatcher} from 'nearly';
+import {dispatcher} from 'nearly-react';
 
 import TodoItem from './TodoItem';
 

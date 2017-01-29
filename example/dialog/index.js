@@ -6,12 +6,12 @@ import React from 'react';
 import { render } from 'react-dom';
 import './nearly-config';
 
-import {connect, dispatcher} from 'nearly';
+import {connect, dispatcher} from 'nearly-react';
 
 import Dialog from './components/Dialog';
 
-let FailDialog = connect(Dialog, 'dialog#fail');
-let SuccessDialog = connect(Dialog, 'dialog#success');
+let FailDialog = connect('dialog#fail', Dialog);
+let SuccessDialog = connect('dialog#success', Dialog);
 
 let showFailDialog = dispatcher('dialog#fail::show');
 let showSuccessDialog = dispatcher('dialog#success::show');

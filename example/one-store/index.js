@@ -9,11 +9,11 @@ import './nearly-config';
 import Input from './components/Input';
 import Text from './components/Text';
 
-import {connect} from 'nearly';
+import {connect} from 'nearly-react';
 
-let InputLeft = connect(Input, 'value');
-let InputRight = connect(Input, 'value');
-let TextCenter = connect(Text, 'value');
+let InputLeft = connect('value', Input);
+let InputRight = connect('value', Input);
+let TextCenter = connect('value', Text);
 
 render(
     <div className="row">

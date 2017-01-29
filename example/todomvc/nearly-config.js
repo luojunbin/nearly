@@ -1,4 +1,4 @@
-import {configure} from 'nearly';
+import {configure} from 'nearly-react';
 
 function nrSplit(str) {
     let [modName, fnName] = str.split('::');

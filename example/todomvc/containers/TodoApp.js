@@ -8,7 +8,7 @@ import infer from '../utils/infer';
 
 import {getHash} from '../utils/index';
 
-import {dispatch, connect} from 'nearly';
+import {dispatch, connect} from 'nearly-react';
 
 class TodoApp extends React.Component {
     constructor(props) {
@@ -22,12 +22,11 @@ class TodoApp extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps)
         localStorage.setItem('todo-data', JSON.stringify(nextProps.list));
     }
 
     render() {
-
+        console.log(this.props)
         // 从初始props推断出新的props
         let inferredProps = infer(this.props.list, this.props.filter);
 
@@ -43,5 +42,9 @@ class TodoApp extends React.Component {
     }
 }
 
-export default connect(TodoApp, 'todos');
+function Loading() {
+    return (<h1>loading...</h1>);
+}
+
+export default connect('todos', TodoApp, Loading);
 

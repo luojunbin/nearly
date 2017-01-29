@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {connect, createStore, dispatcher} from 'nearly';
+import {connect, createStore, dispatcher} from 'nearly-react';
 
 import classNames from 'classnames';
 

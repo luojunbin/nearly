@@ -1,5 +1,5 @@
 
-export function getInitialState() {
+export function init() {
     return {
         text: ''
     };

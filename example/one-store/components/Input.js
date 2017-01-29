@@ -1,5 +1,5 @@
 import React from 'react';
-import {dispatch} from 'nearly';
+import {dispatch} from 'nearly-react';
 
 function change(e) {
     dispatch('value::onChange', e.target.value);

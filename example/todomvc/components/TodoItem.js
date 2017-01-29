@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import {dispatcher, dispatch} from 'nearly';
+import {dispatcher, dispatch} from 'nearly-react';
 
 import classNames from 'classnames';
 

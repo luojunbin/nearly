@@ -14,18 +14,18 @@ npm install --save nearly-react
 
 上图为 [flux](http://facebook.github.io/flux/docs/overview.html#content) 架构图, Nearly 参考自 [flux](http://facebook.github.io/flux/docs/overview.html#content), 在其基础上做了以下简化和改进:
 
-架构上:
+#### 架构上:
 
 1. 以 JS 模块为单位创建 `Store`, 并对使用者屏蔽了 `Store` 的存在, 省略了手动创建 `Store` 的过程, ;
 - 将 JS 模块 `export` 的方法默认注册为 `Dispatcher`, 省略了手动注册 `Dispatcher` 的过程, ;
 - 在 `Dispatcher` 之上增加了 `Parser` 结构, 用于解析传入的具有约定结构的 `actions`, 使之映射到唯一的 `Store` 和 `Dispatcher`;
 
-功能上:
+#### 功能上:
 
 1. 集成 `Promise`, 你不再需要多写一个 `componentDidMount` 方法去异步获取数据, 对热衷于 `stateless component` 的人来说是个福音;
 -  `Store` 的使用更加灵活, 支持同一 `Store` 的单实例使用和多实例使用;
 
-相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
+#### 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
 
 1. API 更加简洁, 在业务中一般只会用到 `connect` 和 `dispatch` 方法;
 -  对 `state` 进行集中管理, 写法与原始的 `React` 相似, 学习和迁移成本低;
@@ -76,7 +76,7 @@ export function add(getState, step) {
  */
 
 import React from 'react';
-import {connect, dispatch} from 'nearly';
+import {connect, dispatch} from 'nearly-react';
 
 // 'counter::add' 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法
 let incr = () => dispatch('counter::add', 1);
@@ -123,7 +123,7 @@ render(
  * @file 配置 nearly
  */
 
-import {configure} from 'nearly';
+import {configure} from 'nearly-react';
 
 // 可供配置的方法有 nrSplit, nrImport 和 nrTarget
 // 这里只配置 nrImport, 其余两个使用默认配置
