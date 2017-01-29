@@ -16,14 +16,14 @@ class Store {
         return {...this.state};
     }
 
-    init(component) {
+    initState(component) {
         let mod = parser.nrImport(this.modName);
 
-        if (typeof mod.getInitialState !== 'function') {
-            throw Error(`'getInitialState' of Action file ${modName} does not exist`);
+        if (typeof mod.init !== 'function') {
+            throw Error(`'init' of Action file ${modName} does not exist`);
         }
 
-        let state = mod.getInitialState();
+        let state = mod.init();
 
         isPromise(state)
         ? state.then(stateAsync => this.dispatch(stateAsync))

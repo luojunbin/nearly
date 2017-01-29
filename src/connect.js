@@ -2,19 +2,18 @@ import React from 'react';
 import {createStore} from './store';
 import {getComponentName} from './utils';
 
-export default function connect(actionFileName, Component, PlaceHolder) {
+export default function connect(storeName, Component, PlaceHolder) {
 
-    let store = createStore(actionFileName);
+    let store = createStore(storeName);
 
     class Provider extends React.Component {
 
         constructor(props) {
             super(props);
-            this.state = store.getState();
         }
 
         componentWillMount() {
-            store.init(this);
+            store.initState(this);
         }
 
         componentDidMount() {
@@ -26,17 +25,17 @@ export default function connect(actionFileName, Component, PlaceHolder) {
         }
 
         render() {
-            return store.isReady
-            ? (PlaceHolder ? false : React.createElement(PlaceHolder))
-            : React.createElement(Component, {
+            return this.state
+            ? React.createElement(Component, {
                 ...this.state,
-                AFN: actionFileName,
+                _storeName: storeName,
                 ...this.props
-            });
+            })
+            : (PlaceHolder ? React.createElement(PlaceHolder) : false);
         }
     }
 
-    Provider.displayName = `${getComponentName(Component)}-${actionFileName}`;
+    Provider.displayName = `${getComponentName(Component)}-${storeName}`;
 
     return Provider;
 }
