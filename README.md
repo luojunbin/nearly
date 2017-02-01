@@ -16,13 +16,13 @@ npm install --save nearly-react
 
 #### 架构上:
 
-1. 以 JS 模块为单位创建 `Store`, 并对使用者屏蔽了 `Store` 的存在, 省略了手动创建 `Store` 的过程, ;
-- 将 JS 模块 `export` 的方法默认注册为 `Dispatcher`, 省略了手动注册 `Dispatcher` 的过程, ;
+1. 以 JS 模块为单位创建 `Store`, 并对使用者屏蔽了 `Store` 的存在, 省略了手动创建 `Store` 的过程;
+- 将 JS 模块 `export` 的方法默认注册为 `Dispatcher`, 省略了手动注册 `Dispatcher` 的过程;
 - 在 `Dispatcher` 之上增加了 `Parser` 结构, 用于解析传入的具有约定结构的 `actions`, 使之映射到唯一的 `Store` 和 `Dispatcher`;
 
 #### 功能上:
 
-1. 集成 `Promise`, 你不再需要多写一个 `componentDidMount` 方法去异步获取数据, 对热衷于 `stateless component` 的人来说是个福音;
+1. 集成 `Promise`, 我们不再需要多写一个 `componentDidMount` 方法去异步获取数据, 更多情况下, 我们将使用 `stateless component` 让代码更加简洁;
 -  `Store` 的使用更加灵活, 支持同一 `Store` 的单实例使用和多实例使用;
 
 #### 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
@@ -94,7 +94,7 @@ function Counter(props) {
 
 // 'counter' 经过 Parser 解析后会得到 /actions/counter.js 模块
 // connect 方法将 Counter 组件与 /actions/counter.js 组合, 生成一个新的组件
-export default connect(Counter, 'counter');
+export default connect('counter', Counter);
 ```
 
 > /index.js
@@ -125,12 +125,10 @@ render(
 
 import {configure} from 'nearly-react';
 
-// 可供配置的方法有 nrSplit, nrImport 和 nrTarget
-// 这里只配置 nrImport, 其余两个使用默认配置
 configure('parser', {
-    // 根据获得的 modName 去指定路径下 require 相应模块
-    nrImport(modName) {
-        let realName = modName.split('#')[0];
+    // 根据获得的 storeName 去指定路径下 require 相应模块
+    nrImport(storeName) {
+        let realName = storeName('#')[0];
         // 根据模块名, 去 actions 目录下引用相应模块
         return require(`./actions/${realName}.js`);
     }
@@ -139,13 +137,40 @@ configure('parser', {
 
 ## API
 
-### connect(storeName: string, Component, [PlaceHolder])
-将 `Component` 和 `storeName` 组合, 返回一个新的组件; 其中 `storeName` 将被 `Parser` 的 `nrImport` 方法解析, 得到相应的 JS 模块; `PlaceHolder` 为默认展示组件, 在 `Component` 被插入 dom 之前会先展示 `PlaceHolder` 组件, 可用于 loading 之类的效果;
 
-### dispatch(action: string, ...args)
-dispatch 会根据 `action` 找到相应的方法, `args` 可以有多个, 并将 args 作为参数传入, 将方法返回的结果写入组件的 `props` 中;
+### connect(storeName, Component [, PlaceHolder])
+该方法根据 `storeName` 创建 `Store`, 再将生成的 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
 
-### dispatcher(action: string, ...args)
+其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
+
+### Dispatcher functions(getState, ...args)
+`Dispatcher function` 的第一个参数为 `getState` 方法, 该方法返回的永远是当前的 `state`, 其余参数为 `dispatch` 方法所传的参数;
+`Dispatcher function` 可以返回一个对象或者 `Promise`, 用于更新 `state`;
+注: 每个 `Store` 文件都必须有一个 `init` 方法, 里面返回的对象或 `Promise` 用于初始化组件;
+
+### dispatch(action, ...args)
+默认配置的 `action` 格式为 `${storeName}::${function}`, 
+
+dispatch 会根据 `action` 找到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果用于更新组件的 `props`;
+
+例:
+
+```
+// actions/text.js
+export function init() { return { text: 'hello' }; }
+export function change(getState, text) { return { text }; }
+
+// components/Text.js
+function Text(props) {
+    return <p>{props.text}</p>
+}
+export default connect('text', Text);
+
+// index.js
+dispatch('text::change', 'hello world!');
+```
+
+### dispatcher(action, ...args)
 即 `dispatch` 的高阶函数; 例:
 
 ```
@@ -171,12 +196,11 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 ![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config-min.png)
 
 
-默认配置及拓展点如下:
+默认配置如下:
 
 ```
-import {configure} from 'nearly`;
+import {configure} from 'nearly';
 
-// 默认配置如下
 configure('parser', {
     // 根据 :: 将 action 分割为 modName(模块名) 和 fnName(方法名); 
     nrSplit(action) {
@@ -186,7 +210,7 @@ configure('parser', {
 
     // 根据获得的 modName 去指定路径下 require 相应模块;
     nrImport(modName) {
-        // '#' 的作用下面会讲
+        // '#' 分隔出 id
         let realName = modName.split('#')[0];
         return require(`./actions/${realName}.js`);
     },
@@ -198,7 +222,7 @@ configure('parser', {
             return mod[functionName];
         }
 
-        // 默认的 Dispatcher;
+        // 全局的 Dispatcher;
         switch (functionName) {
             case 'testState':
                 return (getState, state) => state;
@@ -230,7 +254,7 @@ export function init() {
 
 // getState 方法返回的永远是最新的 state
 export function add(getState, step) {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve({
                 count: getState().count + step
@@ -244,7 +268,7 @@ export function add(getState, step) {
 在业务中我们经常会碰到两个组件依赖同一个数据源, 但两个组件难以通过父级传递数据;
 
 使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
-例: 简单的数据输入同步
+例: 简单的数据输入同步显示
 
 ```js
 // /actions/value.js
@@ -293,11 +317,13 @@ dispatch('dialog#b::close');
 
 
 ## 示例
-[TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)    
-[Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)    
-[Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)   
-[One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)   
-~~React-SPA-Template(基于 nearly 的SPA项目模板)~~
+
+- [TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)
+- [Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)
+- [Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)
+- [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
+
+<!--React-SPA-Template(基于 nearly 的SPA项目模板)-->
 
 
 

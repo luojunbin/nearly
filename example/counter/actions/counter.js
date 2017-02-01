@@ -16,3 +16,13 @@ export function add(getState, step) {
         count: getState().count + step
     };
 }
+
+export function addAsync(getState, step) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                count: getState().count + step
+            });
+        }, 2000);
+    });
+}

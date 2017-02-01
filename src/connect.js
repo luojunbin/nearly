@@ -1,27 +1,27 @@
 import React from 'react';
-import {createStore} from './store';
+import {createStore, destroyStore} from './store';
 import {getComponentName} from './utils';
 
 export default function connect(storeName, Component, PlaceHolder) {
-
-    let store = createStore(storeName);
 
     class Provider extends React.Component {
 
         constructor(props) {
             super(props);
+            this.store = createStore(storeName);
         }
 
         componentWillMount() {
-            store.initState(this);
+            this.store.initState(this);
         }
 
         componentDidMount() {
-            store.subscribe(this);
+            this.store.subscribe(this);
         }
 
         componentWillUnmount() {
-            store.unsubscribe(this);
+            this.store.unsubscribe(this);
+            this.store = destroyStore(storeName);
         }
 
         render() {

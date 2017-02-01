@@ -9,13 +9,19 @@ import {connect, dispatch} from 'nearly-react';
 let incr = () => dispatch('counter::add', 1);
 let decr = () => dispatch('counter::add', -1);
 
+let incrAsync = () => dispatch('counter::addAsync', 1);
+let decrAsync = () => dispatch('counter::addAsync', -1);
+
 // 更推荐使用 stateless component, 除非需要生命周期方法
 function Counter(props) {
     return (
         <div>
             <div className="well">{props.count}</div>
-            <button className="btn btn-default glyphicon glyphicon-minus" onClick={decr} />
-            <button className="btn btn-default glyphicon glyphicon-plus" onClick={incr} />
+            <button className="btn btn-default" onClick={decr}>-</button>
+            <button className="btn btn-default" onClick={incr}>+</button>
+
+            <button className="btn btn-default" onClick={decrAsync}>async -</button>
+            <button className="btn btn-default" onClick={incrAsync}>async +</button>
         </div>
     )
 }

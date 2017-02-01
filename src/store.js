@@ -17,10 +17,14 @@ class Store {
     }
 
     initState(component) {
+        if (this.components.length > 0) {
+            return;
+        }
+
         let mod = parser.nrImport(this.modName);
 
         if (typeof mod.init !== 'function') {
-            throw Error(`'init' of Action file ${this.modName} does not exist`);
+            throw Error(`'init' of Dispatcher file ${this.modName} does not exist`);
         }
 
         let state = mod.init();
@@ -48,7 +52,7 @@ class Store {
     }
 }
 
-export let storeCache = {};
+let storeCache = {};
 
 export function createStore(modName) {
     if (storeCache[modName]) {
@@ -56,6 +60,12 @@ export function createStore(modName) {
     }
 
     return storeCache[modName] = new Store(modName);
+}
+
+export function destroyStore(modName) {
+    if (storeCache[modName].components.length === 0) {
+        storeCache[modName] = undefined;
+    }
 }
 
 export function getStore(modName) {
