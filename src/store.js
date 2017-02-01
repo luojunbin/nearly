@@ -27,7 +27,7 @@ class Store {
             throw Error(`'init' of Dispatcher file ${this.modName} does not exist`);
         }
 
-        let state = mod.init();
+        let state = mod.init(this.getState);
 
         isPromise(state)
         ? state.then(stateAsync => this.dispatch(stateAsync))
