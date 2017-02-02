@@ -145,8 +145,15 @@ configure('parser', {
 
 ### Dispatcher functions(getState, ...args)
 `Dispatcher function` 的第一个参数为 `getState` 方法, 该方法返回的永远是当前的 `state`, 其余参数为 `dispatch` 方法所传的参数;
-`Dispatcher function` 可以返回一个对象或者 `Promise`, 用于更新 `state`;
-注: 每个 `Store` 文件都必须有一个 `init` 方法, 里面返回的对象或 `Promise` 用于初始化组件;
+
+对于 `Dispatcher function` 的返回值:
+
+- 为普通对象时, 返回值直接 merge 进旧 state;
+- 为 `Promise` 时, 取 `Promise.prototype.then` 方法里的参数 merge 进旧 state;
+- 为 `null` 时, 不 merge, 不触发 render;
+
+### init Dispatcher(getFullState, )
+
 
 ### dispatch(action, ...args)
 默认配置的 `action` 格式为 `${storeName}::${function}`, 
