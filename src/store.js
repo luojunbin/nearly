@@ -30,7 +30,7 @@ class Store {
         let state = mod.init(this.getState);
 
         isPromise(state)
-        ? state.then(stateAsync => this.dispatch(stateAsync))
+        ? state.then(this.dispatch)
         : component.state = this.state = state;
     }
 
