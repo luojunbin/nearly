@@ -231,7 +231,7 @@ configure('parser', {
         return require(`./actions/${realName}.js`);
     },
     
-    // 从来自 Store.dispatcherSet 中获得方法
+    // 从 Store.dispatcherSet 中获得 dispatcher
     nrTarget(dispatcherSet, dispatcherName) {
         let dispatcher = dispatcherSet[dispatcherName];
     
