@@ -35,7 +35,7 @@ npm install --save nearly-react
 
 > 目录结构
 
-```js
+```
 /app
     /actions
         counter.js
@@ -47,7 +47,7 @@ npm install --save nearly-react
 
 > /actions/counter.js
 
-```
+```javascript
 /**
  * @file Dispatcher File, 将与 /components/Counter.js 组合
  */
@@ -70,7 +70,7 @@ export function add(getState, step) {
 
 > /components/Counter.js
 
-```
+```javascript
 /**
  * @file 木偶组件, 将与 /actions/counter.js 组合
  */
@@ -99,7 +99,7 @@ export default connect('counter', Counter);
 
 > /index.js
 
-```
+```javascript
 /**
  * @file 应用入口
  */
@@ -118,7 +118,7 @@ render(
 
 > /nearly-config.js
 
-```
+```javascript
 /**
  * @file 配置 nearly
  */
@@ -161,7 +161,7 @@ dispatch 会根据 `action` 找到相应的 `Dispatcher` 方法, 并将 args 作
 
 例:
 
-```
+```javascript
 // actions/text.js
 export function init() { return { text: 'hello' }; }
 export function change(getState, text) { return { text }; }
@@ -179,7 +179,7 @@ dispatch('text::change', 'hello world!');
 ### dispatcher(action, ...args)
 即 `dispatch` 的高阶函数; 例:
 
-```
+```javascript
 dispatch('counter::add', 1);
 等同于: dispatcher('counter::add')(1);
 
@@ -200,7 +200,7 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 
 大体流程如下:
 
-```
+```javascript
 function getDispatcher(action) {
     let {storeName, dispatcherName} = parser.nrSplit(action);
 
@@ -214,7 +214,7 @@ function getDispatcher(action) {
 
 默认配置如下:
 
-```
+```javascript
 import {configure} from 'nearly-react';
 
 configure('parser', {
@@ -259,7 +259,7 @@ configure('parser', {
 
 > /actions/counter.js 异步版本
 
-```
+```javascript
 /**
  * @file Dispatcher File, 将与 /components/Counter.js 组合
  */
@@ -339,7 +339,7 @@ export default connect(Text, 'value');
 ### 同一 Store 多实例使用
 我们开发通用组件时会需要给同一组件绑定同一 `store` 的不同实例以复用;  可以通过给 `storeName` 加上 `#id` 来区分不同 `Store`;
 
-```js
+```javascript
 // Dialog.js
 export default function Dialog (props){
     return <div>{props.content}</div>
