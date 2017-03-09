@@ -139,7 +139,7 @@ configure('parser', {
 
 
 ### connect(storeName, Component [, PlaceHolder])
-该方法根据 `storeName` 创建 `Store`, 再将生成的 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
+该方法会根据 `storeName` 查找或创建 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
 
 其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
 
@@ -152,11 +152,10 @@ configure('parser', {
 - 为 `Promise` 时, 取 `Promise.prototype.then` 方法里的参数 merge 进旧 state;
 - 为 `null` 时, 不 merge, 不触发 render;
 
-### init Dispatcher(getFullState, )
 
 
 ### dispatch(action, ...args)
-默认配置的 `action` 格式为 `${storeName}::${function}`, 
+默认配置的 `action` 格式为 `${storeName}#${id}::${function}`, 
 
 dispatch 会根据 `action` 找到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果用于更新组件的 `props`;
 
@@ -189,53 +188,64 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 ```
 
 ### configure(type, option)
-现阶段 `Nearly` 只支持对 `parser` 的配置, 通过合理的配置, 分类目录结构和特征目录结构 `Nearly` 都能适应;
+现阶段 Nearly 只支持对 `parser` 的配置, 通过合理的配置, 分类目录结构和特征目录结构 `Nearly` 都能适应;
 
-`parser` 中可供配置的方法有 `nrSplit`, `nrImport`, `nrTarget`, 其中,
+`parser` 中可供配置的方法有 `nrImport`, `nrSplit`, `nrTarget`,
 
-- `nrSplit` 将 `action` 分割为 `modName`(模块名) 和 `fnName`(方法名);
-- `nrImport` 根据 `modName` 去 `require` 相应的模块;
-- `nrTarget` 根据获得的模块和 `fnName` 获得相应的方法;
+- `nrImport` 根据 `storeName` 去 `require` 相应的模块;
+- `nrSplit` 将 `action` 分割为 `storeName`(模块名) 和 `dispatcherName`(方法名);
+- `nrTarget` 根据获得的模块和 `dispatcherName` 获得相应的方法;
 
+其中, `nrImport` 在 `connect` 时触发, `nrSplit` 和 `nrTarget` 则在 `dispatch` 时触发;
 
 大体流程如下:
 
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/config-min.png)
+```
+function getDispatcher(action) {
+    let {storeName, dispatcherName} = parser.nrSplit(action);
 
+    let store = getStore(storeName);
+
+    let dispatcher = parser.nrTarget(store.dispatchers, dispatcherName);
+    
+    return dispatcher;
+}
+```
 
 默认配置如下:
 
 ```
-import {configure} from 'nearly';
+import {configure} from 'nearly-react';
 
 configure('parser', {
-    // 根据 :: 将 action 分割为 modName(模块名) 和 fnName(方法名); 
+    // 根据 :: 将 action 分割为 storeName 和 dispatcherName; 
     nrSplit(action) {
-        let [modName, fnName] = action.split('::');
-        return {modName, fnName};
+        let [storeName, dispatcherName] = action.split('::');
+        return {storeName, dispatcherName};
     },
 
-    // 根据获得的 modName 去指定路径下 require 相应模块;
-    nrImport(modName) {
+    // 根据 storeName 去指定路径下加载相应模块;
+    nrImport(storeName) {
         // '#' 分隔出 id
-        let realName = modName.split('#')[0];
+        let realName = storeName.split('#')[0];
         return require(`./actions/${realName}.js`);
     },
     
-    // 根据来自 nrImport 的模块和来自 nrSplit 的方法名,
-    // 命中某个文件中的某个方法;
-    nrTarget(mod, functionName) {
-        if (mod[functionName]) {
-            return mod[functionName];
+    // 从来自 Store.dispatcherSet 中获得方法
+    nrTarget(dispatcherSet, dispatcherName) {
+        let dispatcher = dispatcherSet[dispatcherName];
+    
+        if (dispatcher) {
+            return dispatcher;
         }
 
-        // 全局的 Dispatcher;
+        // 可配置一些全局的 Dispatcher, 用于;
         switch (functionName) {
             case 'testState':
                 return (getState, state) => state;
         }
 
-        throw Error(`the module does not export function ${functionName}`);
+        throw Error(`The dispatcher ${functionName} does not exist.`);
     }
 }
 ```
@@ -259,11 +269,11 @@ export function init() {
     return fetch('./test.json').then(res => res.json());
 }
 
-// getState 方法返回的永远是最新的 state
 export function add(getState, step) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve({
+                // getState 方法返回的永远是最新的 state
                 count: getState().count + step
             });
         }, 1000);
@@ -271,10 +281,35 @@ export function add(getState, step) {
 }
 ```
 
-### 同一 Store 单实例使用
-在业务中我们经常会碰到两个组件依赖同一个数据源, 但两个组件难以通过父级传递数据;
 
-使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
+### 自定义 Store
+
+Nearly 提供了显式注册 Store 的 API. 
+
+#### registerStore(storeName, dispatcherSet)
+
+调用该方法后, 在 `connect` 方法中将不会重新创建 Stroe, 在 `dispatch` 方法中能直接使用, 例:
+
+```
+registerStore('customStore', {
+    // 自定义 Store 同样必须实现 init 方法
+    init() {
+        return {sum: 0};
+    },
+    add(getState, num) {
+        return {sum: getState().sum + num};
+    }
+});
+
+connect('customStore', Test);
+
+dispatch('customStore::add', 1);
+```
+
+### 同一 Store 单实例使用
+在业务中我们经常需要跨组件通信, 或者组件间共享数据;
+
+使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `Store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
 例: 简单的数据输入同步显示
 
 ```js

@@ -1,9 +1,7 @@
-import {getStore, createStore} from './store';
+export {connect} from './connect';
 
-import connect from './connect';
+export {getStore, registerStore} from './store';
 
-import {dispatch, dispatcher} from './dispatch';
+export {dispatch, dispatcher} from './dispatch';
 
-import {configure} from './config';
-
-export {getStore, createStore, connect, dispatch, dispatcher, configure};
+export {configure} from './config';

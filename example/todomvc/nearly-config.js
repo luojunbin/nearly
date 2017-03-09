@@ -1,13 +1,13 @@
 import {configure} from 'nearly-react';
 
 function nrSplit(str) {
-    let [modName, fnName] = str.split('::');
+    let [storeName, dispatcherName] = str.split('::');
 
-    return {modName, fnName};
+    return {storeName, dispatcherName};
 }
 
-function nrImport(modName) {
-    let realName = modName.split('#')[0];
+function nrImport(storeName) {
+    let realName = storeName.split('#')[0];
     // babel 的 import 不能在 function 中, 用 require 代替
     return require(`./actions/${realName}.js`);
 }

@@ -1,7 +1,7 @@
 
 import React, {PropTypes} from 'react';
 
-import {dispatch, connect, createStore} from 'nearly-react';
+import {dispatch, connect, registerStore} from 'nearly-react';
 
 const ENTER_KEY = 13;
 

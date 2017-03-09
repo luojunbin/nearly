@@ -1,13 +1,13 @@
 
 export let parser = {
     nrSplit(str) {
-        let [modName, fnName] = str.split('::');
+        let [storeName, dispatcherName] = str.split('::');
 
-        return {modName, fnName};
+        return {storeName, dispatcherName};
     },
 
-    nrImport(modName) {
-        let realName = modName.split('#')[0];
+    nrImport(storeName) {
+        let realName = storeName.split('#')[0];
 
         return require(`./${realName}.js`);
     },

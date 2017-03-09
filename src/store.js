@@ -3,13 +3,17 @@ import {isPromise} from './utils';
 
 class Store {
 
-    constructor(modName) {
+    constructor(storeName, dispatchers) {
 
-        this.modName = modName;
+        this.storeName = storeName;
 
         this.state = null;
         this.components = [];
+
         this.getState = this.getState.bind(this);
+        this.dispatch = this.dispatch.bind(this);
+
+        this.dispatchers = dispatchers || parser.nrImport(storeName);
     }
 
     getState() {
@@ -21,13 +25,11 @@ class Store {
             return;
         }
 
-        let mod = parser.nrImport(this.modName);
-
-        if (typeof mod.init !== 'function') {
-            throw Error(`'init' of Dispatcher file ${this.modName} does not exist`);
+        if (typeof this.dispatchers.init !== 'function') {
+            throw Error(`'init' of Dispatcher file ${this.storeName} does not exist`);
         }
 
-        let state = mod.init(this.getState);
+        let state = this.dispatchers.init(this.getState);
 
         isPromise(state)
         ? state.then(this.dispatch)
@@ -54,20 +56,20 @@ class Store {
 
 let storeCache = {};
 
-export function createStore(modName) {
-    if (storeCache[modName]) {
-        return storeCache[modName];
+export function registerStore(storeName, dispatchers) {
+    if (storeCache[storeName]) {
+        return storeCache[storeName];
     }
 
-    return storeCache[modName] = new Store(modName);
+    return storeCache[storeName] = new Store(storeName, dispatchers);
 }
 
-export function destroyStore(modName) {
-    if (storeCache[modName].components.length === 0) {
-        storeCache[modName] = undefined;
+export function unregisterStore(storeName) {
+    if (storeCache[storeName].components.length === 0) {
+        storeCache[storeName] = undefined;
     }
 }
 
-export function getStore(modName) {
-    return storeCache[modName];
+export function getStore(storeName) {
+    return storeCache[storeName];
 }
