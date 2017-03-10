@@ -284,11 +284,11 @@ export function add(getState, step) {
 
 ### 自定义 Store
 
-Nearly 提供了显式注册 Store 的 API. 
+对于不希望在 `connect` 时隐式加载 JS 模块并注册 `Store` 的人, 或是不想改变原有项目目录结构的开发者, Nearly 提供了手动注册 `Store` 的 API.
 
 #### registerStore(storeName, dispatcherSet)
 
-调用该方法后, 在 `connect` 方法中将不会重新创建 Stroe, 在 `dispatch` 方法中能直接使用, 例:
+调用该方法后, 在 `connect` 方法中将使用手动注册的 `Store`, 而不会重新注册, 在 `dispatch` 方法中也能直接使用, 例:
 
 ```
 registerStore('customStore', {
@@ -305,6 +305,9 @@ connect('customStore', Test);
 
 dispatch('customStore::add', 1);
 ```
+
+不过作者还是推荐使用 `connect` 隐式注册 `Store`, 因为 `connect` 通过 `storeName` 映射文件来注册 `Store`, 故能保证 `storeName` 的唯一性, 不用考虑在手动注册带来的冲突问题;
+
 
 ### 同一 Store 单实例使用
 在业务中我们经常需要跨组件通信, 或者组件间共享数据;
