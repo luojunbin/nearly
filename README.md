@@ -52,15 +52,13 @@ npm install --save nearly-react
  * @file Dispatcher File, 将与 /components/Counter.js 组合
  */
 
-// 初始化 state, 这个方法将被隐式调用, required!
+// 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
 export function init() {
     return {
         count: 0
     };
 }
 
-// Dispatcher 方法接收的第一个参数为 getState 方法
-// 其余参数是 dispatch 方法中传入的参数
 export function add(getState, step) {
     return {
         count: getState().count + step
@@ -92,9 +90,30 @@ function Counter(props) {
     )
 }
 
-// 'counter' 经过 Parser 解析后会得到 /actions/counter.js 模块
-// connect 方法将 Counter 组件与 /actions/counter.js 组合, 生成一个新的组件
+// 'counter' 经过 Parser 解析后会加载 /actions/counter.js 模块
+// connect 方法将隐式创建一个 `Store`, 并挂载该模块
+// 最终返回一个包裹 Counter 且受 `Store` 控制的高阶组件
 export default connect('counter', Counter);
+```
+
+
+> /nearly-config.js
+
+```js
+/**
+ * @file 配置 nearly
+ */
+
+import {configure} from 'nearly-react';
+
+configure('parser', {
+    // 根据 storeName 去指定路径下加载相应模块
+    nrImport(storeName) {
+        let realName = storeName('#')[0];
+        // 根据模块名, 去 actions 目录下引用相应模块
+        return require(`./actions/${realName}.js`);
+    }
+});
 ```
 
 > /index.js
@@ -113,26 +132,6 @@ render(
     <Counter />,
     document.getElementById('root')
 )
-```
-
-
-> /nearly-config.js
-
-```js
-/**
- * @file 配置 nearly
- */
-
-import {configure} from 'nearly-react';
-
-configure('parser', {
-    // 根据获得的 storeName 去指定路径下 require 相应模块
-    nrImport(storeName) {
-        let realName = storeName('#')[0];
-        // 根据模块名, 去 actions 目录下引用相应模块
-        return require(`./actions/${realName}.js`);
-    }
-});
 ```
 
 ## API
@@ -284,7 +283,7 @@ export function add(getState, step) {
 
 ### 自定义 Store
 
-对于不希望在 `connect` 时隐式加载 JS 模块并注册 `Store` 的人, 或是不想改变原有项目目录结构的开发者, Nearly 提供了手动注册 `Store` 的 API.
+针对不希望在 `connect` 加载 JS 模块并注册 `Store`, 或是不想改变原有项目目录结构的情况, Nearly 提供了手动注册 `Store` 的 API.
 
 #### registerStore(storeName, dispatcherSet)
 
@@ -306,9 +305,6 @@ connect('customStore', Test);
 dispatch('customStore::add', 1);
 ```
 
-不过作者还是推荐使用 `connect` 隐式注册 `Store`, 因为 `connect` 通过 `storeName` 映射文件来注册 `Store`, 故能保证 `storeName` 的唯一性, 不用考虑在手动注册带来的冲突问题;
-
-
 ### 同一 Store 单实例使用
 在业务中我们经常需要跨组件通信, 或者组件间共享数据;
 
@@ -316,25 +312,24 @@ dispatch('customStore::add', 1);
 例: 简单的数据输入同步显示
 
 ```js
-// /actions/value.js
-...
+// /actions/vm.js
+export function init() { return { value: '' }; }
+export function change(getState, value) { return { value }; }
 
-// Input.js
+// /components/Input.js
+let change = e => dispatch('vm::change', e.target.value);
+
 function Input(props) {
-    return (
-        <input className="form-control" value={props.value} onChange={change} />
-    )
+    return <input value={props.value} onChange={change} />
 }
-export default connect(Input, 'value');
+export default connect(Input, 'vm');
 
 
-// Text.js
+// /components/Text.js
 function Text(props) {
-    return (
-        <h2>{props.value}</h2>
-    )
+    return <p>{props.value}</p>
 }
-export default connect(Text, 'value');
+export default connect(Text, 'vm');
 ```
 详见示例: [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
 
@@ -371,6 +366,10 @@ dispatch('dialog#b::close');
 <!--React-SPA-Template(基于 nearly 的SPA项目模板)-->
 
 
+## Tips
 
+1. `nearly-config.js` 必须在业务逻辑之前加载;
+2. 虽然有 `registerStore` API, 不过作者还是推荐使用 `connect` 来隐式注册 `Store`, 因为 `connect` 通过 `storeName` 映射文件的方式来注册 `Store`, 在确保唯一性的同时更容易维护和 debug;
+3. 欢迎提 issue 或是 pr;
 
 
