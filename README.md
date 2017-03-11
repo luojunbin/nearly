@@ -23,12 +23,12 @@ npm install --save nearly-react
 #### 功能上:
 
 1. 集成 `Promise`, 我们不再需要多写一个 `componentDidMount` 方法去异步获取数据, 更多情况下, 我们将使用 `stateless component` 让代码更加简洁;
--  `Store` 的使用更加灵活, 支持同一 `Store` 的单实例使用和多实例使用;
+-  `Store` 的使用更加灵活, `Store` 的单实例和多实例使用能很巧妙地实现跨组件通信和通用组件逻辑的复用;
 
 #### 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
 
 1. API 更加简洁, 在业务中一般只会用到 `connect` 和 `dispatch` 方法;
--  对 `state` 进行集中管理, 写法与原始的 `React` 相似, 学习和迁移成本低;
+-  对状态进行集中管理, 写法与原始的 `React` 相似, 学习和迁移成本低;
 -  更轻量, min 后只有 6K;
 
 ## 使用示例
