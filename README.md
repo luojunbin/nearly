@@ -187,7 +187,7 @@ export function nothing(getState, step) {
 ### dispatch(action, ...args)
 默认配置的 `action` 格式为 `${storeName}#${id}::${function}`, 
 
-dispatch 会根据 `action` 映射到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果用于更新组件的 `props`;
+dispatch 会根据 `action` 映射到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果提交给 `Store`, 由 `Store` 触发组件更新;
 
 
 ### connect(storeName, Component [, PlaceHolder])
@@ -299,7 +299,7 @@ dispatch('customStore::add', 1);
 在业务中我们经常需要跨组件通信, 或者组件间共享数据;
 
 使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `Store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
-例: 简单的数据输入同步显示
+例: 简单的输入同步显示
 
 ```js
 // /actions/vm.js
