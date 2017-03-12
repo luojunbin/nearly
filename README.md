@@ -23,7 +23,7 @@ npm install --save nearly-react
 #### 功能上:
 
 1. 集成 `Promise`, 我们不再需要多写一个 `componentDidMount` 方法去异步获取数据, 更多情况下, 我们将使用 `stateless component` 让代码更加简洁;
--  `Store` 的使用更加灵活, `Store` 的单实例和多实例使用能很巧妙地实现跨组件通信和通用组件逻辑的复用;
+-  `Store` 的使用更加灵活, `Store` 的单实例和多实例使用能很巧妙地实现跨组件通信和通用组件控制逻辑的复用;
 
 #### 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
 
@@ -136,14 +136,8 @@ render(
 
 ## API
 
-
-### connect(storeName, Component [, PlaceHolder])
-该方法会根据 `storeName` 查找或创建 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
-
-其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
-
 ### Dispatcher functions(getState, ...args)
-`Dispatcher function` 的第一个参数为 `getState` 方法, 该方法返回的永远是当前的 `state`, 其余参数为 `dispatch` 方法所传的参数;
+`Dispatcher function` 的第一个参数为 `getState` 方法, 该方法返回的永远是当前最新的 `state`, 其余参数为 `dispatch` 方法所传的参数;
 
 对于 `Dispatcher function` 的返回值:
 
@@ -151,49 +145,64 @@ render(
 - 为 `Promise` 时, 取 `Promise.prototype.then` 方法里的参数 merge 进旧 state;
 - 为 `null` 时, 不 merge, 不触发 render;
 
+例:
+
+> /actions/counter.js 异步版本
+
+```js
+/**
+ * @file Dispatcher File, 将与 /components/Counter.js 组合
+ */
+
+// 必须实现 init 方法, init 中也可以使用 Promise
+export function init() {
+    return fetch('./test.json').then(res => res.json());
+}
+
+// 同步增加
+export function add(getState, step) {
+    return {
+        count: getState().count + step
+    };
+}
+
+// 异步增加
+export function addAsync(getState, step) {
+    return new Promise(resolve => {        
+        setTimeout(() => {
+            // getState 方法返回的永远是最新的 state
+            let count = getState().count + step;
+            resolve({count})
+        }, 1000);
+    });
+}
+
+// 不触发渲染
+export function nothing(getState, step) {
+    return null;
+}
+```
 
 
 ### dispatch(action, ...args)
 默认配置的 `action` 格式为 `${storeName}#${id}::${function}`, 
 
-dispatch 会根据 `action` 找到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果用于更新组件的 `props`;
+dispatch 会根据 `action` 映射到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果用于更新组件的 `props`;
 
-例:
 
-```js
-// actions/text.js
-export function init() { return { text: 'hello' }; }
-export function change(getState, text) { return { text }; }
+### connect(storeName, Component [, PlaceHolder])
+该方法会根据 `storeName` 查找或创建 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
 
-// components/Text.js
-function Text(props) {
-    return <p>{props.text}</p>
-}
-export default connect('text', Text);
-
-// index.js
-dispatch('text::change', 'hello world!');
-```
-
-### dispatcher(action, ...args)
-即 `dispatch` 的高阶函数; 例:
-
-```js
-dispatch('counter::add', 1);
-等同于: dispatcher('counter::add')(1);
-
-dispatch('test::testAdd', 1, 2, 3, 4);
-等同于: dispatcher('test::testAdd', 1, 2)(3, 4);
-```
+其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
 
 ### configure(type, option)
 现阶段 Nearly 只支持对 `parser` 的配置, 通过合理的配置, 分类目录结构和特征目录结构 `Nearly` 都能适应;
 
 `parser` 中可供配置的方法有 `nrImport`, `nrSplit`, `nrTarget`,
 
-- `nrImport` 根据 `storeName` 去 `require` 相应的模块;
-- `nrSplit` 将 `action` 分割为 `storeName`(模块名) 和 `dispatcherName`(方法名);
-- `nrTarget` 根据获得的模块和 `dispatcherName` 获得相应的方法;
+- `nrImport` 根据 `storeName` 去加载相应的模块;
+- `nrSplit` 将 `action` 分割为 `storeName` 和 `dispatcherName`;
+- `nrTarget` 根据加载的模块和 `dispatcherName` 获得相应的方法;
 
 其中, `nrImport` 在 `connect` 时触发, `nrSplit` 和 `nrTarget` 则在 `dispatch` 时触发;
 
@@ -251,41 +260,22 @@ configure('parser', {
 
 ## 进阶使用
 
-### 在 Dispatcher 方法中使用 Promise
-需要声明的是: 在 Nearly 中对 `Promise` 的判断是不完全的(只要有 `then` 方法均认为是 `Promise` 实例, This is a  feature!), 一方面是因为 Nearly 中只使用了 `then` 方法, 另一方面是为了兼容 `$.Deferred`;
 
-以上面的 Counter 的例子做修改:
-
-> /actions/counter.js 异步版本
+### dispatcher(action, ...args)
+即 `dispatch` 的高阶函数; 例:
 
 ```js
-/**
- * @file Dispatcher File, 将与 /components/Counter.js 组合
- */
+dispatch('counter::add', 1);
+等同于: dispatcher('counter::add')(1);
 
-// 初始化 state, 这个方法将被隐式调用, required!
-export function init() {
-    return fetch('./test.json').then(res => res.json());
-}
-
-export function add(getState, step) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve({
-                // getState 方法返回的永远是最新的 state
-                count: getState().count + step
-            });
-        }, 1000);
-    });
-}
+dispatch('test::testAdd', 1, 2, 3, 4);
+等同于: dispatcher('test::testAdd', 1, 2)(3, 4);
 ```
 
 
-### 自定义 Store
+### registerStore(storeName, dispatcherSet)
 
 针对不希望在 `connect` 加载 JS 模块并注册 `Store`, 或是不想改变原有项目目录结构的情况, Nearly 提供了手动注册 `Store` 的 API.
-
-#### registerStore(storeName, dispatcherSet)
 
 调用该方法后, 在 `connect` 方法中将使用手动注册的 `Store`, 而不会重新注册, 在 `dispatch` 方法中也能直接使用, 例:
 
@@ -370,6 +360,7 @@ dispatch('dialog#b::close');
 
 1. `nearly-config.js` 必须在业务逻辑之前加载;
 2. 虽然有 `registerStore` API, 不过作者还是推荐使用 `connect` 来隐式注册 `Store`, 因为 `connect` 通过 `storeName` 映射文件的方式来注册 `Store`, 在确保唯一性的同时更容易维护和 debug;
+3. 在 Nearly 中对 `Promise` 的判断是不准确的 *(只要有 `then` 方法均认为是 `Promise` 实例)* , 一方面是因为 Nearly 中只使用了 `then` 方法, 另一方面是为了兼容 `jQuery.Deferred` 等类库;
 3. 欢迎提 issue 或是 pr;
 
 
