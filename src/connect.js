@@ -1,5 +1,6 @@
 import React from 'react';
-import {registerStore, unregisterStore} from './store';
+import {config} from './config';
+import {getStore, unregisterStore} from './store';
 import {getComponentName} from './utils';
 
 export function connect(storeName, Component, PlaceHolder) {
@@ -8,7 +9,8 @@ export function connect(storeName, Component, PlaceHolder) {
 
         constructor(props) {
             super(props);
-            this.store = registerStore(storeName);
+            config.beforeConnect(storeName);
+            this.store = getStore(storeName);
         }
 
         componentWillMount() {

@@ -1,42 +1,31 @@
+import {registerStore, getStore} from './store';
 
-export let parser = {
-    nrSplit(str) {
-        let [storeName, dispatcherName] = str.split('::');
+export let config = {
+    beforeConnect(storeName) {
+        // let realName = storeName.split('#')[0];
 
-        return {storeName, dispatcherName};
+        // return registerStore(storeName, require(`./${realName}.js`));
     },
 
-    nrImport(storeName) {
-        let realName = storeName.split('#')[0];
+    parse(action) {
+        let [storeName, dispatcherName] = action.split('::');
 
-        return require(`./${realName}.js`);
-    },
-
-    nrTarget(mod, functionName) {
-        if (mod[functionName]) {
-            return mod[functionName];
+        let store = getStore(storeName);
+        if (!store) {
+            throw Error(`store '${storeName}' does not exist`);
         }
 
-        switch (functionName) {
-            case 'testState':
-                return (prevState, state) => state;
+        let dispatcher = store.dispatchers[dispatcherName];
+        if (!dispatcher) {
+            throw Error(`the module does not export function ${dispatcherName}`);
         }
 
-        throw Error(`the module does not export function ${functionName}`);
-    }
-};
-
-export let config = {parser};
-
-export function configure(type, opt) {
-    if (config[type] === undefined) {
-        throw Error(`configure does not supports ${type}`);
-    }
-
-    for (let key in opt) {
-        config[type].hasOwnProperty(key) && (config[type][key] = opt[key]);
+        return {store, dispatcher};        
     }
 }
 
-
-
+export function configure(opt) {
+    for (let key in opt) {
+        config.hasOwnProperty(key) && (config[key] = opt[key]);
+    }
+}

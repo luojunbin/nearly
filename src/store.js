@@ -1,4 +1,3 @@
-import {parser} from './config';
 import {isPromise} from './utils';
 
 class Store {
@@ -13,7 +12,7 @@ class Store {
         this.getState = this.getState.bind(this);
         this.dispatch = this.dispatch.bind(this);
 
-        this.dispatchers = dispatchers || parser.nrImport(storeName);
+        this.dispatchers = dispatchers;
     }
 
     getState() {
