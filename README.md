@@ -14,11 +14,6 @@ npm install --save nearly-react
 
 上图为 [flux](http://facebook.github.io/flux/docs/overview.html#content) 架构图, Nearly 参考自 [flux](http://facebook.github.io/flux/docs/overview.html#content), 在其基础上做了以下简化和改进:
 
-#### 架构上:
-
-1. 以 JS 模块为单位创建 `Store`, 并对使用者屏蔽了 `Store` 的存在, 省略了手动创建 `Store` 的过程;
-- 将 JS 模块 `export` 的方法默认注册为 `Dispatcher`, 省略了手动注册 `Dispatcher` 的过程;
-- 在 `Dispatcher` 之上增加了 `Parser` 结构, 用于解析传入的具有约定结构的 `actions`, 使之映射到唯一的 `Store` 和 `Dispatcher`;
 
 #### 功能上:
 
@@ -33,50 +28,12 @@ npm install --save nearly-react
 
 ## 使用示例
 
-> 目录结构
-
-```
-/app
-    /actions
-        counter.js
-    /components
-        Counter.js
-    index.js
-    nearly-config.js
-```
-
-> /actions/counter.js
-
-```js
-/**
- * @file Dispatcher File, 将与 /components/Counter.js 组合
- */
-
-// 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
-export function init() {
-    return {
-        count: 0
-    };
-}
-
-export function add(getState, step) {
-    return {
-        count: getState().count + step
-    };
-}
-```
-
 > /components/Counter.js
 
 ```js
-/**
- * @file 木偶组件, 将与 /actions/counter.js 组合
- */
-
 import React from 'react';
-import {connect, dispatch} from 'nearly-react';
+import {connect, dispatch, registerStore} from 'nearly-react';
 
-// 'counter::add' 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法
 let incr = () => dispatch('counter::add', 1);
 let decr = () => dispatch('counter::add', -1);
 
@@ -90,42 +47,29 @@ function Counter(props) {
     )
 }
 
-// 'counter' 经过 Parser 解析后会加载 /actions/counter.js 模块
-// connect 方法将隐式创建一个 `Store`, 并挂载该模块
-// 最终返回一个包裹 Counter 且受 `Store` 控制的高阶组件
+registerStore('counter', {
+    // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
+    init() {
+        return {
+            count: 0
+        };
+    },
+
+   add(getState, step) {
+       return {
+           count: getState().count + step
+       };
+   }
+};
+
 export default connect('counter', Counter);
-```
-
-
-> /nearly-config.js
-
-```js
-/**
- * @file 配置 nearly
- */
-
-import {configure} from 'nearly-react';
-
-configure('parser', {
-    // 根据 storeName 去指定路径下加载相应模块
-    nrImport(storeName) {
-        let realName = storeName('#')[0];
-        // 根据模块名, 去 actions 目录下引用相应模块
-        return require(`./actions/${realName}.js`);
-    }
-});
 ```
 
 > /index.js
 
 ```js
-/**
- * @file 应用入口
- */
-
 import React from 'react';
 import { render } from 'react-dom';
-import './nearly-config';
 import Counter from './components/Counter';
 
 render(
@@ -136,7 +80,25 @@ render(
 
 ## API
 
+### registerStore(storeName, dispatcherSet)
+
+该方法将注册一个 `Store`, 需要注意的是该方法必须先 `connect` 执行, 例:
+
+```
+registerStore('customStore', {
+    // 必须实现 init 方法
+    init() {
+        return {sum: 0};
+    },
+    add(getState, num) {
+        return {sum: getState().sum + num};
+    }
+});
+```
+
+
 ### Dispatcher functions(getState, ...args)
+`registerStore` 接受的第二个参数里的方法即 `Dispatcher functions`;
 `Dispatcher function` 的第一个参数为 `getState` 方法, 该方法返回的永远是当前最新的 `state`, 其余参数为 `dispatch` 方法所传的参数;
 
 对于 `Dispatcher function` 的返回值:
@@ -147,116 +109,49 @@ render(
 
 例:
 
-> /actions/counter.js 异步版本
 
 ```js
-/**
- * @file Dispatcher File, 将与 /components/Counter.js 组合
- */
+registerStore('counter', {
+    // 必须实现 init 方法, init 中也可以使用 Promise
+    init() {
+        return fetch('./test.json').then(res => res.json());
+    },
+    
+    add(getState, step) {
+        return {
+            count: getState().count + step
+        };
+    },
+   
+   // 异步增加
+    addAsync(getState, step) {
+        return new Promise(resolve => {        
+            setTimeout(() => {
+                // getState 方法返回的永远是最新的 state
+                let count = getState().count + step;
+                resolve({count})
+            }, 1000);
+        });
+    },
 
-// 必须实现 init 方法, init 中也可以使用 Promise
-export function init() {
-    return fetch('./test.json').then(res => res.json());
-}
-
-// 同步增加
-export function add(getState, step) {
-    return {
-        count: getState().count + step
-    };
-}
-
-// 异步增加
-export function addAsync(getState, step) {
-    return new Promise(resolve => {        
-        setTimeout(() => {
-            // getState 方法返回的永远是最新的 state
-            let count = getState().count + step;
-            resolve({count})
-        }, 1000);
-    });
-}
-
-// 不触发渲染
-export function nothing(getState, step) {
-    return null;
-}
+    // 不触发渲染
+    nothing(getState, step) {
+        return null;
+    }
+};
 ```
 
 
 ### dispatch(action, ...args)
-默认配置的 `action` 格式为 `${storeName}#${id}::${function}`, 
+默认配置的 `action` 格式为 `${storeName}::${function}`, 
 
-dispatch 会根据 `action` 映射到相应的 `Dispatcher` 方法, 并将 args 作为参数传入 `Dispatcher` 方法, 将方法返回的结果提交给 `Store`, 由 `Store` 触发组件更新;
-
+dispatch 会根据 `action` 映射到相应的 `Dispatcher function`, 并将 args 作为参数传入 `Dispatcher function`, 将其返回的结果提交给 `Store`, 由 `Store` 触发组件更新;
 
 ### connect(storeName, Component [, PlaceHolder])
-该方法会根据 `storeName` 查找或创建 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
+该方法会根据 `storeName` 获得 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
 
 其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
 
-### configure(type, option)
-现阶段 Nearly 只支持对 `parser` 的配置, 通过合理的配置, 分类目录结构和特征目录结构 `Nearly` 都能适应;
-
-`parser` 中可供配置的方法有 `nrImport`, `nrSplit`, `nrTarget`,
-
-- `nrImport` 根据 `storeName` 去加载相应的模块;
-- `nrSplit` 将 `action` 分割为 `storeName` 和 `dispatcherName`;
-- `nrTarget` 根据加载的模块和 `dispatcherName` 获得相应的方法;
-
-其中, `nrImport` 在 `connect` 时触发, `nrSplit` 和 `nrTarget` 则在 `dispatch` 时触发;
-
-大体流程如下:
-
-```js
-function getDispatcher(action) {
-    let {storeName, dispatcherName} = parser.nrSplit(action);
-
-    let store = getStore(storeName);
-
-    let dispatcher = parser.nrTarget(store.dispatchers, dispatcherName);
-    
-    return dispatcher;
-}
-```
-
-默认配置如下:
-
-```js
-import {configure} from 'nearly-react';
-
-configure('parser', {
-    // 根据 :: 将 action 分割为 storeName 和 dispatcherName; 
-    nrSplit(action) {
-        let [storeName, dispatcherName] = action.split('::');
-        return {storeName, dispatcherName};
-    },
-
-    // 根据 storeName 去指定路径下加载相应模块;
-    nrImport(storeName) {
-        // '#' 分隔出 id
-        let realName = storeName.split('#')[0];
-        return require(`./actions/${realName}.js`);
-    },
-    
-    // 从 Store.dispatcherSet 中获得 dispatcher
-    nrTarget(dispatcherSet, dispatcherName) {
-        let dispatcher = dispatcherSet[dispatcherName];
-    
-        if (dispatcher) {
-            return dispatcher;
-        }
-
-        // 可配置一些全局的 Dispatcher, 用于;
-        switch (functionName) {
-            case 'testState':
-                return (getState, state) => state;
-        }
-
-        throw Error(`The dispatcher ${functionName} does not exist.`);
-    }
-}
-```
 
 ## 进阶使用
 
@@ -273,27 +168,62 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 ```
 
 
-### registerStore(storeName, dispatcherSet)
+### configure(option)
 
-针对不希望在 `connect` 加载 JS 模块并注册 `Store`, 或是不想改变原有项目目录结构的情况, Nearly 提供了手动注册 `Store` 的 API.
+使用 `nearly` 进行开发, 我们需要考虑 `storeName` 重复的情况, 我推荐通过将 `storeName` 映射文件路径的方式来避免;
 
-调用该方法后, 在 `connect` 方法中将使用手动注册的 `Store`, 而不会重新注册, 在 `dispatch` 方法中也能直接使用, 例:
+`nearly` 提供了两个可供配置的方法: `beforeConnect` 和 `beforeDispatch`;
 
-```
-registerStore('customStore', {
-    // 自定义 Store 同样必须实现 init 方法
-    init() {
-        return {sum: 0};
+- `beforeConnect` 会在 `connect` 方法被调用之前调用, 接受的参数为传入 `connect` 方法的 `storeName`; 我们可以用它去加载对应的 JS 文件, 并注册 `Store`;
+- `beforeDispatch` 会在 `dispatch` 方法被调用之前调用, 接受的参数为传入 `dispatch` 方法的 `action`;
+
+
+默认配置如下:
+
+```js
+import {registerStore, getStore} from './store';
+
+let config = {
+    // 默认不开启自动注册 Store
+    beforeConnect(storeName) {
+        // let realName = storeName.split('#')[0];
+        // return registerStore(storeName, require(`./${realName}.js`));
     },
-    add(getState, num) {
-        return {sum: getState().sum + num};
+
+    beforeDispatch(action) {
+        let [storeName, dispatcherName] = action.split('::');
+
+        let store = getStore(storeName);
+        if (!store) {
+            throw Error(`store '${storeName}' does not exist`);
+        }
+
+        let dispatcher = store.dispatchers[dispatcherName];
+        if (!dispatcher) {
+            throw Error(`the module does not export function ${dispatcherName}`);
+        }
+
+        return {store, dispatcher};        
+    }
+}
+```
+
+使用示例:
+
+```js
+import {configure, registerStore} from 'nearly-react';
+
+export default configure({
+    // 配置 beforeConnect 方法, 自动注册 Store
+    // 自动去 actions 目录下加载 JS 模块, 并注册 Store
+    beforeConnect(storeName) {
+        let realName = storeName.split('#')[0];
+        return registerStore(storeName, require(`./actions/${realName}.js`));
     }
 });
 
-connect('customStore', Test);
-
-dispatch('customStore::add', 1);
 ```
+
 
 ### 同一 Store 单实例使用
 在业务中我们经常需要跨组件通信, 或者组件间共享数据;
