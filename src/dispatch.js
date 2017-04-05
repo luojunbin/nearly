@@ -6,7 +6,7 @@ import {getStore} from './store';
 import {isPromise} from './utils';
 
 export function dispatch(action, ...args) {
-    let {store, dispatcher} = config.parse(action);
+    let {store, dispatcher} = config.beforeDispatch(action);
     let state = dispatcher.apply(store, [store.getState, ...args]);
 
     return isPromise(state)

@@ -7,7 +7,7 @@ export let config = {
         // return registerStore(storeName, require(`./${realName}.js`));
     },
 
-    parse(action) {
+    beforeDispatch(action) {
         let [storeName, dispatcherName] = action.split('::');
 
         let store = getStore(storeName);
