@@ -23,7 +23,7 @@ export function connect(storeName, Component, PlaceHolder) {
 
         componentWillUnmount() {
             this.store.unsubscribe(this);
-            this.store = unregisterStore(storeName);
+            // this.store = unregisterStore(storeName);
         }
 
         render() {
