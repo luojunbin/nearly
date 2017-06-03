@@ -1,8 +1,16 @@
 var path = require('path')
 var webpack = require('webpack')
 
+console.log(path.resolve(__dirname, '../../src'));
+
 module.exports = {
     devtool: 'source-map',
+
+    resolve: {
+        alias: {
+            'nearly-react': path.resolve(__dirname, '../../src')
+        }
+    },
 
     entry: {
         index: ['./index']
@@ -20,7 +28,10 @@ module.exports = {
             test: /\.js$/,
             loaders: ['babel'],
             exclude: /node_modules/,
-            include: __dirname
+            include: [
+                path.resolve(__dirname, '../../src'),
+                __dirname
+            ]
         }, {
             test: /\.css?$/,
             loaders: ['style', 'raw'],
