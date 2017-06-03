@@ -2,12 +2,15 @@
  * @file 配置 nearly
  */
 
-import {configure, registerStore} from 'nearly-react';
+import {configure, getStore, registerStore} from 'nearly-react';
 
-export default configure({
+configure({
     beforeConnect(storeName) {
-        let realName = storeName.split('#')[0];
+        let store = getStore(storeName);
 
-        return registerStore(storeName, require(`./actions/${realName}.js`));
+        if (!store) {
+            let realName = storeName.split('#')[0];
+            registerStore(storeName, require(`./actions/${realName}.js`));
+        }
     }
 });
