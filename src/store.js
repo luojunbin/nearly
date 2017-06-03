@@ -46,7 +46,10 @@ class Store {
     dispatch(state) {
         if (state !== null) {
             this.state = {...this.state, ...state};
-            this.components.forEach(v => v.setState(this.state));
+            this.components.forEach(v => {
+                v._isDirtyFromNearly = true;
+                v.setState(this.state, () => v._isDirtyFromNearly = false);
+            });
         }
 
         return this.state;

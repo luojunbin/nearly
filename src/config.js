@@ -1,6 +1,8 @@
 import {registerStore, getStore} from './store';
 
 export let config = {
+    defaultPure: false,
+
     beforeConnect(storeName) {
         // let realName = storeName.split('#')[0];
 

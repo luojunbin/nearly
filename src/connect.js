@@ -3,13 +3,15 @@ import {config} from './config';
 import {getStore, unregisterStore} from './store';
 import {getComponentName} from './utils';
 
-export function connect(storeName, Component, PlaceHolder) {
+export function connect(storeName, Component, PlaceHolder, isPure = config.defaultPure) {
 
     class Provider extends React.Component {
 
         constructor(props) {
             super(props);
             config.beforeConnect(storeName);
+
+            this._isDirtyFromNearly = false;
             this.store = getStore(storeName);
         }
 
@@ -19,6 +21,10 @@ export function connect(storeName, Component, PlaceHolder) {
 
         componentDidMount() {
             this.store.subscribe(this);
+        }
+
+        shouldComponentUpdate() {
+            return !isPure || this._isDirtyFromNearly;
         }
 
         componentWillUnmount() {

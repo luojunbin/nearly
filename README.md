@@ -147,11 +147,14 @@ registerStore('counter', {
 
 dispatch 会根据 `action` 映射到相应的 `Dispatcher function`, 并将 args 作为参数传入 `Dispatcher function`, 将其返回的结果提交给 `Store`, 由 `Store` 触发组件更新;
 
-### connect(storeName, Component [, PlaceHolder])
+### connect(storeName, Component [, PlaceHolder, isPure])
 该方法会根据 `storeName` 获得 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
 
 其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
 
+但组件过大时, 可以通过设置 `isPure` 为 true 来提高性能, 当设置 `isPure` 为 true 时, 只有 `dispatch` 方法能触发组件的 `render`, 我相信这比通过在 `shouldComponentUpdate` 里写 `shallowEqual` 要有效得多;
+
+也可以通过下面的 `configure` 设置默认的 `isPure` 为 true;
 
 ## 进阶使用
 
@@ -184,6 +187,9 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 import {registerStore, getStore} from './store';
 
 let config = {
+    // 默认的 isPure
+    defaultPure: false,
+
     // 默认不开启自动注册 Store
     beforeConnect(storeName) {
         // let store = getStore(storeName);
