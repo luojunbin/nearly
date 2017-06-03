@@ -186,8 +186,12 @@ import {registerStore, getStore} from './store';
 let config = {
     // 默认不开启自动注册 Store
     beforeConnect(storeName) {
-        // let realName = storeName.split('#')[0];
-        // return registerStore(storeName, require(`./${realName}.js`));
+        // let store = getStore(storeName);
+
+        // if (!store) {
+        //    let realName = storeName.split('#')[0];
+        //    registerStore(storeName, require(`./actions/${realName}.js`));
+        // }
     },
 
     beforeDispatch(action) {
@@ -211,17 +215,21 @@ let config = {
 使用示例:
 
 ```js
-import {configure, registerStore} from 'nearly-react';
+import {configure, getStore, registerStore} from 'nearly-react';
 
-export default configure({
-    // 配置 beforeConnect 方法, 自动注册 Store
-    // 自动去 actions 目录下加载 JS 模块, 并注册 Store
+configure({
     beforeConnect(storeName) {
-        let realName = storeName.split('#')[0];
-        return registerStore(storeName, require(`./actions/${realName}.js`));
+        // 配置 beforeConnect 方法, 自动注册 Store
+        // 当 store 不存在时
+        // 自动去 actions 目录下加载 JS 模块, 并注册 Store
+        let store = getStore(storeName);
+
+        if (!store) {
+            let realName = storeName.split('#')[0];
+            registerStore(storeName, require(`./actions/${realName}.js`));
+        }
     }
 });
-
 ```
 
 
