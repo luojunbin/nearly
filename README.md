@@ -28,24 +28,10 @@ npm install --save nearly-react
 
 ## 使用示例
 
-> /components/Counter.js
-
 ```js
 import React from 'react';
+import { render } from 'react-dom';
 import {connect, dispatch, registerStore} from 'nearly-react';
-
-let incr = () => dispatch('counter::add', 1);
-let decr = () => dispatch('counter::add', -1);
-
-function Counter(props) {
-    return (
-        <div>
-            <button onClick={incr}> - </button>
-            <span>{props.count}</span>
-            <button onClick={decr}> + </button>
-        </div>
-    )
-}
 
 registerStore('counter', {
     // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
@@ -62,18 +48,23 @@ registerStore('counter', {
    }
 };
 
-export default connect('counter', Counter);
-```
+let incr = () => dispatch('counter::add', 1);
+let decr = () => dispatch('counter::add', -1);
 
-> /index.js
+function Counter(props) {
+    return (
+        <div>
+            <button onClick={incr}> - </button>
+            <span>{props.count}</span>
+            <button onClick={decr}> + </button>
+        </div>
+    )
+}
 
-```js
-import React from 'react';
-import { render } from 'react-dom';
-import Counter from './components/Counter';
+let HocCounter = connect('counter', Counter);
 
 render(
-    <Counter />,
+    <HocCounter />,
     document.getElementById('root')
 )
 ```
@@ -108,7 +99,6 @@ registerStore('customStore', {
 - 为 `null` 时, 不 merge, 不触发 render;
 
 例:
-
 
 ```js
 registerStore('counter', {
@@ -296,9 +286,7 @@ dispatch('dialog#b::close');
 - [Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)
 - [Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)
 - [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
-
-<!--React-SPA-Template(基于 nearly 的SPA项目模板)-->
-
+- [React-SPA-Seed](https://github.com/luojunbin/React-SPA-Seed)
 
 ## Tips
 
