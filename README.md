@@ -236,9 +236,21 @@ configure({
 例: 简单的输入同步显示
 
 ```js
-// /actions/vm.js
-export function init() { return { value: '' }; }
-export function change(getState, value) { return { value }; }
+
+registerStore('vm', {
+    // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
+    init() {
+        return {
+            value: ''
+        };
+    },
+
+   change(getState, value) {
+       return {
+           return { value };
+       };
+   }
+};
 
 // /components/Input.js
 let change = e => dispatch('vm::change', e.target.value);
