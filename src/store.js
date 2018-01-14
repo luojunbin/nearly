@@ -1,77 +1,50 @@
 import {isPromise} from './utils';
 
-class Store {
-
+export class StoreModule {
     constructor(storeName, dispatchers) {
-
         this.storeName = storeName;
 
         this.state = null;
-        this.components = [];
+        this.renders = [];
+        this.dispatchers = dispatchers;
 
         this.getState = this.getState.bind(this);
         this.dispatch = this.dispatch.bind(this);
-
-        this.dispatchers = dispatchers;
+        this.syncDispatch = this.syncDispatch.bind(this);
     }
 
     getState() {
         return {...this.state};
     }
 
-    initState(component) {
-        if (this.components.length > 0) {
-            return;
-        }
-
+    initState() {
         if (typeof this.dispatchers.init !== 'function') {
-            throw Error(`'init' of Dispatcher file ${this.storeName} does not exist`);
+            throw Error(`can not find 'init' of ${this.storeName}`);
         }
 
-        let state = this.dispatchers.init(this.getState);
+        this.dispatch(this.dispatchers.init(this.getState));
+    }
 
+    link(render) {
+        this.renders.push(render);
+    }
+
+    unlink(render) {
+        this.renders = this.renders.filter(v => v !== render);
+    }
+
+    dispatch (state) {
         isPromise(state)
-        ? state.then(this.dispatch)
-        : component.state = this.state = state;
+        ? state.then(this.syncDispatch)
+        : this.syncDispatch(state);
     }
 
-    subscribe(component) {
-        this.components.push(component);
-    }
-
-    unsubscribe(component) {
-        this.components = this.components.filter(v => v !== component);
-    }
-
-    dispatch(state) {
+    syncDispatch(state) {
         if (state !== null) {
             this.state = {...this.state, ...state};
-            this.components.forEach(v => {
-                v._isDirtyFromNearly = true;
-                v.setState(this.state, () => v._isDirtyFromNearly = false);
-            });
+            this.renders.forEach(render => render(this.state));
         }
 
         return this.state;
     }
-}
-
-let storeCache = {};
-
-export function registerStore(storeName, dispatchers) {
-    if (storeCache[storeName]) {
-        return storeCache[storeName];
-    }
-
-    return storeCache[storeName] = new Store(storeName, dispatchers);
-}
-
-export function unregisterStore(storeName) {
-    if (storeCache[storeName].components.length === 0) {
-        storeCache[storeName] = undefined;
-    }
-}
-
-export function getStore(storeName) {
-    return storeCache[storeName];
 }

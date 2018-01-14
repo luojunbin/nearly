@@ -1,26 +1,26 @@
 import React from 'react';
 import {config} from './config';
-import {getStore, unregisterStore} from './store';
+import StoreManager from './store-manager';
 import {getComponentName} from './utils';
 
-export function connect(storeName, Component, PlaceHolder, isPure = config.defaultPure) {
+export function connect(Component, isPure = config.defaultPure) {
 
     class Provider extends React.Component {
 
         constructor(props) {
             super(props);
-            config.beforeConnect(storeName);
-
+            
             this._isDirtyFromNearly = false;
-            this.store = getStore(storeName);
+
+            this.setState = this.setState.bind(this);
+
+            this.store = new StoreManager(this.setState);
         }
 
-        componentWillMount() {
-            this.store.initState(this);
-        }
-
-        componentDidMount() {
-            this.store.subscribe(this);
+        // @override
+        setState(state) {
+            this._isDirtyFromNearly = true;
+            super.setState(state, () => (this._isDirtyFromNearly = false));
         }
 
         shouldComponentUpdate() {
@@ -28,22 +28,18 @@ export function connect(storeName, Component, PlaceHolder, isPure = config.defau
         }
 
         componentWillUnmount() {
-            this.store.unsubscribe(this);
-            // this.store = unregisterStore(storeName);
+            this.store.destory();
         }
 
         render() {
-            return this.state
-            ? React.createElement(Component, {
-                ...this.state,
-                _storeName: storeName,
-                ...this.props
-            })
-            : (PlaceHolder ? React.createElement(PlaceHolder) : false);
+            React.createElement(Component, {
+                ...this.props,
+                store: this.store
+            });
         }
     }
 
-    Provider.displayName = `${getComponentName(Component)}-${storeName}`;
+    Provider.displayName = getComponentName(Component);
 
     return Provider;
 }

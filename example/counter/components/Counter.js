@@ -16,7 +16,8 @@ let decrAsync = () => dispatch('counter::addAsync', -1);
 function Counter(props) {
     return (
         <div>
-            <div className="well">{props.count}</div>
+            <div className="well">{props.store.count}</div>
+            <div className="well">{props.store.x}</div>
             <button className="btn btn-default" onClick={decr}>-</button>
             <button className="btn btn-default" onClick={incr}>+</button>
 
@@ -28,4 +29,4 @@ function Counter(props) {
 
 // 'counter' 经过 Parser 解析后会得到 /actions/counter.js 的引用
 // connect 方法将 Counter 组件与 /actions/counter.js 组合, 生成一个新的组件
-export default connect('counter', Counter);
+export default connect('counter&test', Counter);
