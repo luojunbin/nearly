@@ -1,6 +1,6 @@
 
 // 判断是不是 promise 的对象, 弱判断;
-export function isPromise(obj) {
+export function isThenable(obj) {
     return !!obj && (typeof obj.then === 'function');
 }
 

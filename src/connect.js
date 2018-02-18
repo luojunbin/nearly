@@ -1,45 +1,60 @@
 import React from 'react';
 import {config} from './config';
-import StoreManager from './store-manager';
+import {getStore} from './store-manager';
 import {getComponentName} from './utils';
 
-export function connect(Component, isPure = config.defaultPure) {
 
-    class Provider extends React.Component {
+export function connect (storeNames, Component, PlaceHolder, isPure = config.defaultPure) {
 
-        constructor(props) {
-            super(props);
-            
-            this._isDirtyFromNearly = false;
+  class Provider extends React.Component {
 
-            this.setState = this.setState.bind(this);
+    constructor (props) {
+      super(props);
+      this.setState = this.setState.bind(this);
 
-            this.store = new StoreManager(this.setState);
-        }
+      this._isDirtyFromNearly = false;
 
-        // @override
-        setState(state) {
-            this._isDirtyFromNearly = true;
-            super.setState(state, () => (this._isDirtyFromNearly = false));
-        }
+      config.beforeConnect(storeNames);
 
-        shouldComponentUpdate() {
-            return !isPure || this._isDirtyFromNearly;
-        }
-
-        componentWillUnmount() {
-            this.store.destory();
-        }
-
-        render() {
-            React.createElement(Component, {
-                ...this.props,
-                store: this.store
-            });
-        }
+      this.store = [].concat(storeNames).map(v => getStore(v));
     }
 
-    Provider.displayName = getComponentName(Component);
+    // @override
+    setState (state) {
+      this._isDirtyFromNearly = true;
+      super.setState(state, () => (this._isDirtyFromNearly = false));
+    }
 
-    return Provider;
+    componentWillMount () {
+      this.store.forEach(v => {
+        v.link(this.setState);
+        v.initState()
+      });
+    }
+
+    shouldComponentUpdate () {
+      return !isPure || this._isDirtyFromNearly;
+    }
+
+    componentWillUnmount () {
+      this.store.forEach(v => v.unlink(this.setState));
+    }
+
+    render () {
+      return this.state
+        ? React.createElement(Component, {
+          ...this.props,
+          _storeNames: storeNames,
+          store: {
+            ...this.props.store,
+            ...this.state
+          }
+        })
+        : (PlaceHolder ? React.createElement(PlaceHolder) : false);
+    }
+  }
+
+  Provider.displayName = `${getComponentName(Component)}-${storeNames}`;
+
+  return Provider;
 }
