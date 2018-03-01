@@ -6,17 +6,18 @@ import {getComponentName} from './utils';
 
 export function connect (storeNames, Component, PlaceHolder, isPure = config.defaultPure) {
 
+  config.beforeConnect(storeNames);
+
   class Provider extends React.Component {
 
     constructor (props) {
       super(props);
-      this.setState = this.setState.bind(this);
 
+      this.state = {};
       this._isDirtyFromNearly = false;
-
-      config.beforeConnect(storeNames);
-
       this.store = [].concat(storeNames).map(v => getStore(v));
+
+      this.setState = this.setState.bind(this);
     }
 
     // @override
@@ -25,10 +26,16 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
       super.setState(state, () => (this._isDirtyFromNearly = false));
     }
 
+    initStore () {
+      return this.store.map(v => v.initState());
+    }
+
     componentWillMount () {
       this.store.forEach(v => {
         v.link(this.setState);
-        v.initState()
+        v.state
+          ? this.state[v.storeName] = v.getState()
+          : v.initState();
       });
     }
 
@@ -37,24 +44,26 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
     }
 
     componentWillUnmount () {
-      this.store.forEach(v => v.unlink(this.setState));
+      this.store.forEach(v => v.unlink(this));
     }
 
     render () {
-      return this.state
-        ? React.createElement(Component, {
-          ...this.props,
-          _storeNames: storeNames,
-          store: {
-            ...this.props.store,
-            ...this.state
-          }
-        })
-        : (PlaceHolder ? React.createElement(PlaceHolder) : false);
+      if (Object.keys(this.state).length !== this.store.length && typeof PlaceHolder !== 'undefined') {
+        return PlaceHolder && React.createElement(PlaceHolder);
+      }
+      return React.createElement(Component, {
+        ...this.props,
+        _storeNames: storeNames,
+        store: {
+          ...this.props.store,
+          ...this.state
+        }
+      });
     }
   }
 
   Provider.displayName = `${getComponentName(Component)}-${storeNames}`;
+  Provider.isNearlyComponent = true;
 
   return Provider;
 }

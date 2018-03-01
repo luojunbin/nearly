@@ -1,6 +1,6 @@
 export {connect} from './connect';
 
-export {getStore, registerStore} from './store-manager';
+export {getStore, registerStore, resetStore} from './store-manager';
 
 export {dispatch, dispatcher} from './dispatch';
 
