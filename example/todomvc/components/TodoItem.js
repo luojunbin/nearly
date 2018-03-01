@@ -17,7 +17,7 @@ export default class TodoItem extends React.Component {
 
     blurHandle(uid) {
         return (e) => {
-            this.refs.editInput && dispatch('todos::finishEdit', uid, e.target.value.trim());
+            this.refs.editInput && dispatch('todos.finishEdit', uid, e.target.value.trim());
         };
     }
 
@@ -30,7 +30,7 @@ export default class TodoItem extends React.Component {
                 let value = e.target.value.trim();
 
                 if (value) {
-                    dispatch('todos::finishEdit', uid, value);
+                    dispatch('todos.finishEdit', uid, value);
                 }
             }
         };
@@ -57,12 +57,12 @@ export default class TodoItem extends React.Component {
                         className="toggle"
                         type="checkbox"
                         checked={isCompleted}
-                        onChange={dispatcher('todos::toggle', uid)}
+                        onChange={dispatcher('todos.toggle', uid)}
                     />
-                    <label onDoubleClick={dispatcher('todos::edit', uid)}>{text}</label>
+                    <label onDoubleClick={dispatcher('todos.edit', uid)}>{text}</label>
                     <button
                         className="destroy"
-                        onClick={dispatcher('todos::del', uid)}
+                        onClick={dispatcher('todos.del', uid)}
                     ></button>
                 </div>
                 <input

@@ -48,8 +48,8 @@ registerStore('counter', {
    }
 };
 
-let incr = () => dispatch('counter::add', 1);
-let decr = () => dispatch('counter::add', -1);
+let incr = () => dispatch('counter.add', 1);
+let decr = () => dispatch('counter.add', -1);
 
 function Counter(props) {
     return (
@@ -133,7 +133,7 @@ registerStore('counter', {
 
 
 ### dispatch(action, ...args)
-默认配置的 `action` 格式为 `${storeName}::${function}`, 
+默认配置的 `action` 格式为 `${storeName}.${function}`,
 
 dispatch 会根据 `action` 映射到相应的 `Dispatcher function`, 并将 args 作为参数传入 `Dispatcher function`, 将其返回的结果提交给 `Store`, 由 `Store` 触发组件更新;
 
@@ -153,11 +153,11 @@ dispatch 会根据 `action` 映射到相应的 `Dispatcher function`, 并将 arg
 即 `dispatch` 的高阶函数; 例:
 
 ```js
-dispatch('counter::add', 1);
-等同于: dispatcher('counter::add')(1);
+dispatch('counter.add', 1);
+等同于: dispatcher('counter.add')(1);
 
-dispatch('test::testAdd', 1, 2, 3, 4);
-等同于: dispatcher('test::testAdd', 1, 2)(3, 4);
+dispatch('test.testAdd', 1, 2, 3, 4);
+等同于: dispatcher('test.testAdd', 1, 2)(3, 4);
 ```
 
 
@@ -191,7 +191,7 @@ let config = {
     },
 
     beforeDispatch(action) {
-        let [storeName, dispatcherName] = action.split('::');
+        let [storeName, dispatcherName] = action.split('.');
 
         let store = getStore(storeName);
         if (!store) {
@@ -253,7 +253,7 @@ registerStore('vm', {
 };
 
 // /components/Input.js
-let change = e => dispatch('vm::change', e.target.value);
+let change = e => dispatch('vm.change', e.target.value);
 
 function Input(props) {
     return <input value={props.value} onChange={change} />
@@ -283,9 +283,9 @@ let DialogA = connect(Dialog, 'dialog#a');
 let DialogB = connect(Dialog, 'dialog#b');
 
 // 关闭弹窗 A
-dispatch('dialog#a::close');
+dispatch('dialog#a.close');
 // 关闭弹窗 B
-dispatch('dialog#b::close');
+dispatch('dialog#b.close');
 ```
 注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props._storeName` 来确定 `storeName`;
 

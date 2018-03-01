@@ -2,7 +2,7 @@ import React from 'react';
 import {dispatch} from 'grax-react';
 
 function change(e) {
-    dispatch('value::onChange', e.target.value);
+    dispatch('value.onChange', e.target.value);
 }
 
 export default function Input(props) {

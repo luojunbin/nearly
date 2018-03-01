@@ -5,12 +5,12 @@
 import React from 'react';
 import {connect, dispatch, dispatcher} from 'grax-react';
 
-// 'counter::add' 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法
-let incr = () => dispatch('counter::add', 1);
-let decr = () => dispatch('counter::add', -1);
+// 'counter.add' 经过 Parser 解析后会调用 /actions/counter.js 里的 add 方法
+let incr = () => dispatch('counter.add', 1);
+let decr = () => dispatch('counter.add', -1);
 
-let incrAsync = () => dispatch('counter::addAsync', 1);
-let decrAsync = () => dispatch('counter::addAsync', -1);
+let incrAsync = () => dispatch('counter.addAsync', 1);
+let decrAsync = () => dispatch('counter.addAsync', -1);
 
 // 更推荐使用 stateless component, 除非需要生命周期方法
 function Counter(props) {
@@ -33,8 +33,8 @@ function Counter2(props) {
   return (
     <div>
       <div className="well">{props.store.test.x}</div>
-      <button className="btn btn-default" onClick={dispatcher('test::add', 1)}>-</button>
-      <button className="btn btn-default" onClick={dispatcher('test::add', -1)}>+</button>
+      <button className="btn btn-default" onClick={dispatcher('test.add', 1)}>-</button>
+      <button className="btn btn-default" onClick={dispatcher('test.add', -1)}>+</button>
     </div>
   )
 }

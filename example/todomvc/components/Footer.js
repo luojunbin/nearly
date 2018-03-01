@@ -4,7 +4,7 @@ import {connect, registerStore, dispatcher} from 'grax-react';
 
 import classNames from 'classnames';
 
-let clearCompleted = dispatcher('todos::clearCompleted');
+let clearCompleted = dispatcher('todos.clearCompleted');
 
 function getClassName(filter) {
     let base = {

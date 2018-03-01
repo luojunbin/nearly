@@ -13,8 +13,8 @@ import Dialog from './components/Dialog';
 let FailDialog = connect('dialog#fail', Dialog);
 let SuccessDialog = connect('dialog#success', Dialog);
 
-let showFailDialog = dispatcher('dialog#fail::show');
-let showSuccessDialog = dispatcher('dialog#success::show');
+let showFailDialog = dispatcher('dialog#fail.show');
+let showSuccessDialog = dispatcher('dialog#success.show');
 
 render(
     <div>

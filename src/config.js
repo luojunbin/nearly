@@ -10,7 +10,7 @@ export let config = {
     },
 
     beforeDispatch(action) {
-        let [storeName, dispatcherName] = action.split('::');
+        let [storeName, dispatcherName] = action.split('.');
 
         let store = getStore(storeName);
         if (!store) {

@@ -12,14 +12,14 @@ function submit(e) {
         let value = e.target.value.trim();
 
         if (value) {
-            dispatch('todos::add', value);
-            dispatch('header::reset');
+            dispatch('todos.add', value);
+            dispatch('header.reset');
         }
     }
 }
 
 function change(e) {
-    dispatch('header::setText', e.target.value);
+    dispatch('header.setText', e.target.value);
 }
 
 function Header(props) {

@@ -16,7 +16,7 @@ export default function Dialog(props) {
                     <button
                         type="button"
                         className="close"
-                        onClick={dispatcher(`${props._storeName}::dismiss`)}>
+                        onClick={dispatcher(`${props._storeName}.dismiss`)}>
                         <span>&times;</span>
                         <span className="sr-only">Close</span>
                     </button>
@@ -27,7 +27,7 @@ export default function Dialog(props) {
                     <button
                         type="button"
                         className="btn btn-default"
-                        onClick={dispatcher(`${props._storeName}::dismiss`)}
+                        onClick={dispatcher(`${props._storeName}.dismiss`)}
                         >Close</button>
                     <button type="button" className="btn btn-primary">Save changes</button>
                 </div>

@@ -20,7 +20,7 @@ export default function Main (props) {
                 className="toggle-all"
                 type="checkbox"
                 checked={isChecked}
-                onChange={dispatcher('todos::toggleAll', !isChecked)}
+                onChange={dispatcher('todos.toggleAll', !isChecked)}
             />
             <ul className="todo-list">
                 {selectedList.map(v => <TodoItem {...v} key={v.uid} isEditing={editing === v.uid} />)}

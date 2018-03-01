@@ -17,7 +17,7 @@ class TodoApp extends React.Component {
 
     componentDidMount() {
         window.onhashchange = function () {
-            dispatch('todos::changeFilter', getHash());
+            dispatch('todos.changeFilter', getHash());
         }        
     }
 
