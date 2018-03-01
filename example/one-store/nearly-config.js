@@ -1,8 +1,8 @@
 /**
- * @file 配置 nearly
+ * @file 配置 grax
  */
 
-import {configure, getStore, registerStore} from 'nearly-react';
+import {configure, getStore, registerStore} from 'grax-react';
 
 configure({
     beforeConnect(storeName) {

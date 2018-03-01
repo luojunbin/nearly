@@ -8,7 +8,7 @@ module.exports = {
 
     resolve: {
         alias: {
-            'nearly-react': path.resolve(__dirname, '../../src')
+            'grax-react': path.resolve(__dirname, '../../src')
         }
     },
 

@@ -1,18 +1,18 @@
-# Nearly
+# Grax
 
 一个简洁, 强大的数据流框架;
 
 ## 安装
 
 ```
-npm install --save nearly-react
+npm install --save grax-react
 ```
 
 ## 特性
 
-![data-flow](https://github.com/luojunbin/nearly/blob/master/doc/flux-diagram-white-background.png)
+![data-flow](https://github.com/luojunbin/grax/blob/master/doc/flux-diagram-white-background.png)
 
-上图为 [flux](http://facebook.github.io/flux/docs/overview.html#content) 架构图, Nearly 参考自 [flux](http://facebook.github.io/flux/docs/overview.html#content), 在其基础上做了以下简化和改进:
+上图为 [flux](http://facebook.github.io/flux/docs/overview.html#content) 架构图, Grax 参考自 [flux](http://facebook.github.io/flux/docs/overview.html#content), 在其基础上做了以下简化和改进:
 
 
 #### 功能上:
@@ -31,7 +31,7 @@ npm install --save nearly-react
 ```js
 import React from 'react';
 import { render } from 'react-dom';
-import {connect, dispatch, registerStore} from 'nearly-react';
+import {connect, dispatch, registerStore} from 'grax-react';
 
 registerStore('counter', {
     // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
@@ -163,9 +163,9 @@ dispatch('test::testAdd', 1, 2, 3, 4);
 
 ### configure(option)
 
-使用 `nearly` 进行开发, 我们需要考虑 `storeName` 重复的情况, 我推荐通过将 `storeName` 映射文件路径的方式来避免;
+使用 `grax` 进行开发, 我们需要考虑 `storeName` 重复的情况, 我推荐通过将 `storeName` 映射文件路径的方式来避免;
 
-`nearly` 提供了两个可供配置的方法: `beforeConnect` 和 `beforeDispatch`;
+`grax` 提供了两个可供配置的方法: `beforeConnect` 和 `beforeDispatch`;
 
 - `beforeConnect` 会在 `connect` 方法被调用之前调用, 接受的参数为传入 `connect` 方法的 `storeName`; 我们可以用它去加载对应的 JS 文件, 并注册 `Store`;
 - `beforeDispatch` 会在 `dispatch` 方法被调用之前调用, 接受的参数为传入 `dispatch` 方法的 `action`;
@@ -211,7 +211,7 @@ let config = {
 使用示例:
 
 ```js
-import {configure, getStore, registerStore} from 'nearly-react';
+import {configure, getStore, registerStore} from 'grax-react';
 
 configure({
     beforeConnect(storeName) {
@@ -232,7 +232,7 @@ configure({
 ### 同一 Store 单实例使用
 在业务中我们经常需要跨组件通信, 或者组件间共享数据;
 
-使用 Nearly 我们能很轻易地将两个不同的组件绑定相同的 `Store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
+使用 Grax 我们能很轻易地将两个不同的组件绑定相同的 `Store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
 例: 简单的输入同步显示
 
 ```js
@@ -267,7 +267,7 @@ function Text(props) {
 }
 export default connect(Text, 'vm');
 ```
-详见示例: [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
+详见示例: [One-store](https://github.com/luojunbin/grax/tree/master/example/one-store)
 
 
 ### 同一 Store 多实例使用
@@ -289,22 +289,22 @@ dispatch('dialog#b::close');
 ```
 注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props._storeName` 来确定 `storeName`;
 
-详见示例: [Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)
+详见示例: [Dialog](https://github.com/luojunbin/grax/tree/master/example/dialog)
 
 
 ## 示例
 
-- [TodoMVC](https://github.com/luojunbin/nearly/tree/master/example/todomvc)
-- [Counter](https://github.com/luojunbin/nearly/tree/master/example/counter)
-- [Dialog](https://github.com/luojunbin/nearly/tree/master/example/dialog)
-- [One-store](https://github.com/luojunbin/nearly/tree/master/example/one-store)
+- [TodoMVC](https://github.com/luojunbin/grax/tree/master/example/todomvc)
+- [Counter](https://github.com/luojunbin/grax/tree/master/example/counter)
+- [Dialog](https://github.com/luojunbin/grax/tree/master/example/dialog)
+- [One-store](https://github.com/luojunbin/grax/tree/master/example/one-store)
 - [React-SPA-Seed](https://github.com/luojunbin/React-SPA-Seed)
 
 ## Tips
 
-1. `nearly-config.js` 必须在业务逻辑之前加载;
+1. `grax-config.js` 必须在业务逻辑之前加载;
 2. 虽然有 `registerStore` API, 不过作者还是推荐使用 `connect` 来隐式注册 `Store`, 因为 `connect` 通过 `storeName` 映射文件的方式来注册 `Store`, 在确保唯一性的同时更容易维护和 debug;
-3. 在 Nearly 中对 `Promise` 的判断是不准确的 *(只要有 `then` 方法均认为是 `Promise` 实例)* , 一方面是因为 Nearly 中只使用了 `then` 方法, 另一方面是为了兼容 `jQuery.Deferred` 等类库;
+3. 在 Grax 中对 `Promise` 的判断是不准确的 *(只要有 `then` 方法均认为是 `Promise` 实例)* , 一方面是因为 Grax 中只使用了 `then` 方法, 另一方面是为了兼容 `jQuery.Deferred` 等类库;
 3. 欢迎提 issue 或是 pr;
 
 

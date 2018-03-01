@@ -1,6 +1,6 @@
 {
-  "name": "nearly-react",
-  "version": "1.9.3",
+  "name": "grax-react",
+  "version": "1.9.4",
   "description": "A light and powerful data flow with React",
   "scripts": {
     "build": "NODE_ENV=production webpack && ./node_modules/babel-cli/bin/babel.js src --out-dir lib",
@@ -15,13 +15,13 @@
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/luojunbin/nearly.git"
+    "url": "https://github.com/luojunbin/grax.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/luojunbin/nearly/issues"
+    "url": "https://github.com/luojunbin/grax/issues"
   },
-  "homepage": "https://github.com/luojunbin/nearly",
+  "homepage": "https://github.com/luojunbin/grax",
   "dependencies": {},
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0"

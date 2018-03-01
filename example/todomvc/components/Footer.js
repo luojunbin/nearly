@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {connect, registerStore, dispatcher} from 'nearly-react';
+import {connect, registerStore, dispatcher} from 'grax-react';
 
 import classNames from 'classnames';
 

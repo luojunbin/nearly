@@ -14,7 +14,7 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
       super(props);
 
       this.state = {};
-      this._isDirtyFromNearly = false;
+      this._isDirtyFromGrax = false;
       this.store = [].concat(storeNames).map(v => getStore(v));
 
       this.setState = this.setState.bind(this);
@@ -22,8 +22,8 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
 
     // @override
     setState (state) {
-      this._isDirtyFromNearly = true;
-      super.setState(state, () => (this._isDirtyFromNearly = false));
+      this._isDirtyFromGrax = true;
+      super.setState(state, () => (this._isDirtyFromGrax = false));
     }
 
     initStore () {
@@ -40,7 +40,7 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
     }
 
     shouldComponentUpdate () {
-      return !isPure || this._isDirtyFromNearly;
+      return !isPure || this._isDirtyFromGrax;
     }
 
     componentWillUnmount () {
@@ -63,7 +63,7 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
   }
 
   Provider.displayName = `${getComponentName(Component)}-${storeNames}`;
-  Provider.isNearlyComponent = true;
+  Provider.isGraxComponent = true;
 
   return Provider;
 }

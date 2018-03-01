@@ -19,10 +19,10 @@ var config = {
     ],
 
     output: {
-        library: 'Nearly',
+        library: 'Grax',
         libraryTarget: 'umd',
         path: path.join(__dirname, 'dist'),
-        filename: 'nearly.js'
+        filename: 'grax.js'
     },
 
     plugins: [
@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === 'production') {
             }
         })
     );
-    config.output.filename = 'nearly.min.js';
+    config.output.filename = 'grax.min.js';
 }
 
 module.exports = config;

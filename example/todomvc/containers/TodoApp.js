@@ -8,7 +8,7 @@ import infer from '../utils/infer';
 
 import {getHash} from '../utils/index';
 
-import {dispatch, connect} from 'nearly-react';
+import {dispatch, connect} from 'grax-react';
 
 class TodoApp extends React.Component {
     constructor(props) {

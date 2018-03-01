@@ -4,12 +4,12 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import './nearly-config';
+import './grax-config';
 
 import Input from './components/Input';
 import Text from './components/Text';
 
-import {connect} from 'nearly-react';
+import {connect} from 'grax-react';
 
 let InputLeft = connect('value', Input);
 let InputRight = connect('value', Input);

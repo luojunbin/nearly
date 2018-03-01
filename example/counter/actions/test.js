@@ -1,6 +1,7 @@
 
 // 返回初始 state, 这个方法是必须的
 export function init() {
+  console.log('init test');
     return {
         x: 0
     };

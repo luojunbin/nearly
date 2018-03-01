@@ -7,7 +7,7 @@ import './style/app.css';
 
 import 'todomvc-common/base';
 
-import './nearly-config';
+import './grax-config';
     
 import TodoApp from './containers/TodoApp';
 

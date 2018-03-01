@@ -5,7 +5,7 @@ module.exports = {
     devtool: 'source-map',
     resolve: {
         alias: {
-            'nearly-react': path.resolve(__dirname, '../../src')
+            'grax-react': path.resolve(__dirname, '../../src')
         }
     },
     entry: {

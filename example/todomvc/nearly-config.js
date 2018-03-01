@@ -1,4 +1,4 @@
-import {configure, getStore, registerStore} from 'nearly-react';
+import {configure, getStore, registerStore} from 'grax-react';
 
 configure({
     beforeConnect(storeName) {

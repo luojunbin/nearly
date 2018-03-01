@@ -1,13 +1,13 @@
 {
-  "name": "nearly-example",
+  "name": "grax-example",
   "version": "0.0.0",
-  "description": "Nearly counter example",
+  "description": "Grax counter example",
   "scripts": {
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/luojunbin/nearly.git"
+    "url": "https://github.com/luojunbin/grax.git"
   },
   "keywords": [
     "react",
@@ -17,13 +17,11 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/luojunbin/nearly/issues"
+    "url": "https://github.com/luojunbin/grax/issues"
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "nearly-react": "latest",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "grax-react": "latest"
   },
   "devDependencies": {
     "babel-core": "^6.3.15",

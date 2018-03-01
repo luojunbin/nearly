@@ -1,13 +1,13 @@
 {
-  "name": "nearly-example",
+  "name": "grax-example",
   "version": "0.0.0",
-  "description": "Nearly todomvc example",
+  "description": "Grax todomvc example",
   "scripts": {
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/luojunbin/nearly.git"
+    "url": "https://github.com/luojunbin/grax.git"
   },
   "keywords": [
     "react",
@@ -17,11 +17,11 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/luojunbin/nearly/issues"
+    "url": "https://github.com/luojunbin/grax/issues"
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "nearly-react": "^1.7.9",
+    "grax-react": "^1.7.9",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "todomvc-app-css": "^2.0.0",

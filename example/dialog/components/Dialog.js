@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import {dispatcher} from 'nearly-react';
+import {dispatcher} from 'grax-react';
 
 export default function Dialog(props) {
 

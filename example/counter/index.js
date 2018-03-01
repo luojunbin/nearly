@@ -3,15 +3,21 @@
  */
 
 import React from 'react';
-import { render } from 'react-dom';
-import './nearly-config';
-import Counter from './components/Counter';
-import {Counter22} from './components/Counter';
+import {render} from 'react-dom';
+import {renderToString} from 'react-dom/server';
+import './grax-config';
+import {resetStore} from 'grax-react';
+import Counter, {Counter22} from './Components/Counter';
+
+let a = (
+  [
+    <Counter22 key={1}/>,
+    <Counter key={11}/>,
+    <p key={3}>111</p>
+  ]
+);
 
 render(
-  <div>
-    <Counter />
-    <Counter22 />
-  </div>,
-    document.getElementById('root')
-)
+  a,
+  document.getElementById('root')
+);

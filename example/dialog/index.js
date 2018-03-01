@@ -4,9 +4,9 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import './nearly-config';
+import './grax-config';
 
-import {connect, dispatcher} from 'nearly-react';
+import {connect, dispatcher} from 'grax-react';
 
 import Dialog from './components/Dialog';
 
