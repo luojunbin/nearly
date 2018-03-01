@@ -53,7 +53,7 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
       }
       return React.createElement(Component, {
         ...this.props,
-        _storeNames: storeNames,
+        storeNames,
         store: {
           ...this.props.store,
           ...this.state

@@ -8,6 +8,10 @@
 npm install --save grax-react
 ```
 
+## 依赖
+
+Grax 依赖 Promise, 对需要兼容旧版本浏览器的场景, 需要使用 [polyfill](https://github.com/stefanpenner/es6-promise);
+
 ## 特性
 
 ![data-flow](https://github.com/luojunbin/grax/blob/master/doc/flux-diagram-white-background.png)
@@ -17,14 +21,15 @@ npm install --save grax-react
 
 #### 功能上:
 
-- 集成 `Promise`, 我们不再需要多写一个 `componentDidMount` 方法去异步获取数据, 更多情况下, 我们将使用 `stateless component` 让代码更加简洁;
--  `Store` 的使用更加灵活, `Store` 的单实例和多实例使用能很巧妙地实现跨组件通信和通用组件控制逻辑的复用;
+- 我们不再需要在 `componentDidMount` 里去异步获取数据来渲染组件, 更多情况下, 我们将使用 `stateless component` 让代码更加简洁;
+- 我们可以通过返回一个 `Promise` 来表示一个异步的 Action, 更加简洁;
+- 提供便捷的服务器端渲染特性;
 
 #### 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
 
 - API 更加简洁, 在业务中一般只会用到 `connect` 和 `dispatch` 方法;
--  对状态进行集中管理, 写法与原始的 `React` 相似, 学习和迁移成本低;
--  更轻量, min 后只有 6K;
+- 对状态进行集中管理, 写法与原始的 `React` 相似, 学习和迁移成本低;
+- 更轻量, 压缩后只有 6K;
 
 ## 使用示例
 
@@ -34,17 +39,17 @@ import { render } from 'react-dom';
 import {connect, dispatch, registerStore} from 'grax-react';
 
 registerStore('counter', {
-    // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
-    init() {
-        return {
-            count: 0
-        };
-    },
+  // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
+  init() {
+    return {
+      count: 0
+    };
+  },
 
    add(getState, step) {
-       return {
-           count: getState().count + step
-       };
+     return {
+       count: getState().count + step
+     };
    }
 };
 
@@ -52,20 +57,20 @@ let incr = () => dispatch('counter.add', 1);
 let decr = () => dispatch('counter.add', -1);
 
 function Counter(props) {
-    return (
-        <div>
-            <button onClick={incr}> - </button>
-            <span>{props.count}</span>
-            <button onClick={decr}> + </button>
-        </div>
-    )
+  return (
+    <div>
+      <button onClick={incr}> - </button>
+      <span>{props.store.counter.count}</span>
+      <button onClick={decr}> + </button>
+    </div>
+  )
 }
 
-let HocCounter = connect('counter', Counter);
+let ConnectCounter = connect('counter', Counter);
 
 render(
-    <HocCounter />,
-    document.getElementById('root')
+  <ConnectCounter />,
+  document.getElementById('root')
 )
 ```
 
@@ -77,13 +82,14 @@ render(
 
 ```
 registerStore('customStore', {
-    // 必须实现 init 方法
-    init() {
-        return {sum: 0};
-    },
-    add(getState, num) {
-        return {sum: getState().sum + num};
-    }
+  // 必须实现 init 方法
+  init() {
+    return {count: 0};
+  },
+  // Dispatcher function
+  add(getState, num) {
+    return {count: getState().count + num};
+  }
 });
 ```
 
@@ -95,59 +101,54 @@ registerStore('customStore', {
 对于 `Dispatcher function` 的返回值:
 
 - 为普通对象时, 返回值直接 merge 进旧 state;
-- 为 `Promise` 时, 取 `Promise.prototype.then` 方法里的参数 merge 进旧 state;
+- 为 `Promise` 时, 取 ` resolve` 的值 merge 进旧 state;
 - 为 `null` 时, 不 merge, 不触发 render;
 
 例:
 
 ```js
 registerStore('counter', {
-    // 必须实现 init 方法, init 中也可以使用 Promise
-    init() {
-        return fetch('./test.json').then(res => res.json());
-    },
-    
-    add(getState, step) {
-        return {
-            count: getState().count + step
-        };
-    },
+  // 必须实现 init 方法, init 中也可以使用 Promise
+  init() {
+    return fetch('./test.json').then(res => res.json());
+  },
+
+  // 同步增加
+  add(getState, step) {
+    return {
+      count: getState().count + step
+    };
+  },
    
    // 异步增加
-    addAsync(getState, step) {
-        return new Promise(resolve => {        
-            setTimeout(() => {
-                // getState 方法返回的永远是最新的 state
-                let count = getState().count + step;
-                resolve({count})
-            }, 1000);
-        });
-    },
+  addAsync(getState, step) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        // getState 方法返回的永远是最新的 state
+        let count = getState().count + step;
+        resolve({count})
+      }, 1000);
+    });
+  },
 
-    // 不触发渲染
-    nothing(getState, step) {
-        return null;
-    }
+  // 不触发渲染
+  nothing(getState, step) {
+    return null;
+  }
 };
 ```
 
-
 ### dispatch(action, ...args)
-默认配置的 `action` 格式为 `${storeName}.${function}`,
+`action` 格式为 `${storeName}.${dispatcherName}`,
 
-dispatch 会根据 `action` 映射到相应的 `Dispatcher function`, 并将 args 作为参数传入 `Dispatcher function`, 将其返回的结果提交给 `Store`, 由 `Store` 触发组件更新;
+### connect(storeNames, Component[, PlaceHolder, isPure])
 
-### connect(storeName, Component [, PlaceHolder, isPure])
-该方法会根据 `storeName` 获得 `Store`, 再将 `Store`, `Component` 和 `PlaceHolder` 组合, 返回一个高阶组件;
+`connect` 是一个高阶组件, 其将 Component 包裹后返回一个全新的组件;
 
-其中, `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 组合后的高阶组件会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
-
-但组件过大时, 可以通过设置 `isPure` 为 true 来提高性能, 当设置 `isPure` 为 true 时, 只有 `dispatch` 方法能触发组件的 `render`, 我相信这比通过在 `shouldComponentUpdate` 里写 `shallowEqual` 要有效得多;
-
-也可以通过下面的 `configure` 设置默认的 `isPure` 为 true;
-
-## 进阶使用
-
+- `storeName` 可以是字符串或字符串数组, 当一个组件需要绑定多个 store 时可传入一个字符串数组;
+- `Component` 是需要被绑定 store 的组件, 绑定后, Component 的 props 会被注入 `storeNames` 和 `store` 属性, 详见文档的第一个例子;
+- `PlaceHolder` 为默认展示组件 (可选), 当且仅当 `store` 的 `init` 返回 `Promise` 时有效, 在 `Component` 被插入 dom 之前, 会先展示 `PlaceHolder` 组件, 可用于实现 loading 之类的效果;
+- `isPure` 是一个用于性能优化的配置, 默认值为 false, 当设置为 true 时, 只有 `dispatch` 方法能触发组件的 `render`, 我相信这比通过在 `shouldComponentUpdate` 里写 `shallowEqual` 要高效和精准得多;
 
 ### dispatcher(action, ...args)
 即 `dispatch` 的高阶函数; 例:
@@ -160,151 +161,40 @@ dispatch('test.testAdd', 1, 2, 3, 4);
 等同于: dispatcher('test.testAdd', 1, 2)(3, 4);
 ```
 
-
 ### configure(option)
 
-使用 `grax` 进行开发, 我们需要考虑 `storeName` 重复的情况, 我推荐通过将 `storeName` 映射文件路径的方式来避免;
+`grax` 提供了以下可供配置的参数;
 
-`grax` 提供了两个可供配置的方法: `beforeConnect` 和 `beforeDispatch`;
-
-- `beforeConnect` 会在 `connect` 方法被调用之前调用, 接受的参数为传入 `connect` 方法的 `storeName`; 我们可以用它去加载对应的 JS 文件, 并注册 `Store`;
+- `defaultPure`, 默认值为 false, 设置为 true 时所有 `connect` 方法的 `isPure` 参数都会默认为 true;
+- `beforeConnect` 会在 `connect` 方法被调用之前调用, 接受的参数为传入 `connect` 方法的 `storeName`;
 - `beforeDispatch` 会在 `dispatch` 方法被调用之前调用, 接受的参数为传入 `dispatch` 方法的 `action`;
 
+注意 `configure` 必须在业务逻辑之前运行, 否则不生效;
 
-默认配置如下:
-
-```js
-import {registerStore, getStore} from './store';
-
-let config = {
-    // 默认的 isPure
-    defaultPure: false,
-
-    // 默认不开启自动注册 Store
-    beforeConnect(storeName) {
-        // let store = getStore(storeName);
-
-        // if (!store) {
-        //    let realName = storeName.split('#')[0];
-        //    registerStore(storeName, require(`./actions/${realName}.js`));
-        // }
-    },
-
-    beforeDispatch(action) {
-        let [storeName, dispatcherName] = action.split('.');
-
-        let store = getStore(storeName);
-        if (!store) {
-            throw Error(`store '${storeName}' does not exist`);
-        }
-
-        let dispatcher = store.dispatchers[dispatcherName];
-        if (!dispatcher) {
-            throw Error(`the module does not export function ${dispatcherName}`);
-        }
-
-        return {store, dispatcher};        
-    }
-}
-```
-
-使用示例:
+例:
 
 ```js
-import {configure, getStore, registerStore} from 'grax-react';
+import {configure} from 'grax-react';
 
 configure({
-    beforeConnect(storeName) {
-        // 配置 beforeConnect 方法, 自动注册 Store
-        // 当 store 不存在时
-        // 自动去 actions 目录下加载 JS 模块, 并注册 Store
-        let store = getStore(storeName);
-
-        if (!store) {
-            let realName = storeName.split('#')[0];
-            registerStore(storeName, require(`./actions/${realName}.js`));
-        }
-    }
+  defaultPure: true,
+  beforeConnect(storeNames) {},
+  beforeDispatch(action) {}
 });
 ```
-
-
-### 同一 Store 单实例使用
-在业务中我们经常需要跨组件通信, 或者组件间共享数据;
-
-使用 Grax 我们能很轻易地将两个不同的组件绑定相同的 `Store`, 只要传入 `connect` 的 `storeName` 是相同的即可;
-例: 简单的输入同步显示
-
-```js
-
-registerStore('vm', {
-    // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
-    init() {
-        return {
-            value: ''
-        };
-    },
-
-   change(getState, value) {
-       return {
-           return { value };
-       };
-   }
-};
-
-// /components/Input.js
-let change = e => dispatch('vm.change', e.target.value);
-
-function Input(props) {
-    return <input value={props.value} onChange={change} />
-}
-export default connect(Input, 'vm');
-
-
-// /components/Text.js
-function Text(props) {
-    return <p>{props.value}</p>
-}
-export default connect(Text, 'vm');
-```
-详见示例: [One-store](https://github.com/luojunbin/grax/tree/master/example/one-store)
-
-
-### 同一 Store 多实例使用
-我们开发通用组件时会需要给同一组件绑定同一 `store` 的不同实例以复用;  可以通过给 `storeName` 加上 `#id` 来区分不同 `Store`;
-
-```js
-// Dialog.js
-export default function Dialog (props){
-    return <div>{props.content}</div>
-}
-
-let DialogA = connect(Dialog, 'dialog#a');
-let DialogB = connect(Dialog, 'dialog#b');
-
-// 关闭弹窗 A
-dispatch('dialog#a.close');
-// 关闭弹窗 B
-dispatch('dialog#b.close');
-```
-注意, 当在组件内部使用 `dispatch` 时, 可以通过 `props._storeName` 来确定 `storeName`;
-
-详见示例: [Dialog](https://github.com/luojunbin/grax/tree/master/example/dialog)
-
 
 ## 示例
 
 - [TodoMVC](https://github.com/luojunbin/grax/tree/master/example/todomvc)
 - [Counter](https://github.com/luojunbin/grax/tree/master/example/counter)
 - [Dialog](https://github.com/luojunbin/grax/tree/master/example/dialog)
-- [One-store](https://github.com/luojunbin/grax/tree/master/example/one-store)
+- [MVVM](https://github.com/luojunbin/grax/tree/master/example/one-store)
 - [React-SPA-Seed](https://github.com/luojunbin/React-SPA-Seed)
 
 ## Tips
 
-1. `grax-config.js` 必须在业务逻辑之前加载;
-2. 虽然有 `registerStore` API, 不过作者还是推荐使用 `connect` 来隐式注册 `Store`, 因为 `connect` 通过 `storeName` 映射文件的方式来注册 `Store`, 在确保唯一性的同时更容易维护和 debug;
-3. 在 Grax 中对 `Promise` 的判断是不准确的 *(只要有 `then` 方法均认为是 `Promise` 实例)* , 一方面是因为 Grax 中只使用了 `then` 方法, 另一方面是为了兼容 `jQuery.Deferred` 等类库;
+1. 推荐在 `beforeConnect` 中通过传入的 `storeName` 映射文件名, 动态 ``require` 来 `registerStore`, 这样在保证 `storeName` 唯一性的同时会更加直观和好维护;
+2. 在 Grax 中对 `Promise` 的判断是不准确的 *(只要有 `then` 方法均认为是 `Promise` 实例)* , 一方面是因为 Grax 中只使用了 `then` 方法, 另一方面是为了兼容 `jQuery.Deferred` 等类库;
 3. 欢迎提 issue 或是 pr;
 
 
