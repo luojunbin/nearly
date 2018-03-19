@@ -23,7 +23,6 @@ Grax 依赖 Promise, 对需要兼容旧版本浏览器的场景, 需要使用 [p
 
 - 我们不再需要在 `componentDidMount` 里去异步获取数据来渲染组件, 更多情况下, 我们将使用 `stateless component` 让代码更加简洁;
 - 我们可以通过返回一个 `Promise` 来表示一个异步的 Action, 更加简洁;
-- 提供便捷的服务器端渲染特性;
 
 #### 相比 [flux](http://facebook.github.io/flux/docs/overview.html#content):
 
@@ -35,41 +34,39 @@ Grax 依赖 Promise, 对需要兼容旧版本浏览器的场景, 需要使用 [p
 
 ```js
 import React from 'react';
-import { render } from 'react-dom';
+import {render} from 'react-dom';
 import {connect, dispatch, registerStore} from 'grax-react';
 
-registerStore('counter', {
+registerStore('vm', {
   // 必须实现 init 方法, 它将被隐式调用, 作用是初始化 state
   init() {
     return {
-      count: 0
+      value: ''
     };
   },
 
-   add(getState, step) {
-     return {
-       count: getState().count + step
-     };
-   }
+  change(getState, value) {
+    return {
+        value
+    };
+  }
 };
 
-let incr = () => dispatch('counter.add', 1);
-let decr = () => dispatch('counter.add', -1);
+let change = (val) => dispatch('vm.change', val);
 
-function Counter(props) {
-  return (
-    <div>
-      <button onClick={incr}> - </button>
-      <span>{props.store.counter.count}</span>
-      <button onClick={decr}> + </button>
-    </div>
-  )
+function Input(props) {
+  return <input value={props.store.vm.value} change={change} />
 }
 
-let ConnectCounter = connect('counter', Counter);
+function Text(props) {
+  return <p>{props.store.vm.value}</p>
+}
+
+let GInput = connect('vm', Input);
+let GText = connect('vm', Text);
 
 render(
-  <ConnectCounter />,
+  <div><GInput/><GText/></div>,
   document.getElementById('root')
 )
 ```
