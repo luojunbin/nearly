@@ -1,26 +1,25 @@
 import StoreModule from './store';
+import {isBrowser} from './env-detect';
 
-let storeCache = window.ss = {};
+let storeCache = {};
 
-export function registerStore(storeName, dispatchers) {
-    if (storeCache[storeName]) {
-        return storeCache[storeName];
-    }
-
-    return storeCache[storeName] = new StoreModule(storeName, dispatchers);
-}
-
-export function unregisterStore(storeName) {
-    if (storeCache[storeName].renders.length === 0) {
-        storeCache[storeName] = undefined;
-    }
-}
-
-export function getStore(storeName) {
+export function registerStore (storeName, dispatchers) {
+  if (storeCache[storeName]) {
     return storeCache[storeName];
+  }
+
+  let state = isBrowser
+    ? window.__GRAX_STATE__[storeName]
+    : null;
+
+  return storeCache[storeName] = new StoreModule(storeName, dispatchers, state);
 }
 
-export function resetStore () {
+export function getStore (storeName) {
+  return storeCache[storeName];
+}
+
+export function setGraxState () {
   for (let key in storeCache) {
     storeCache[key].state = null;
   }
