@@ -1,10 +1,17 @@
 import {isThenable} from './utils';
 
-export default class StoreModule {
-  constructor (storeName, dispatchers) {
-    this.storeName = storeName;
 
-    this.state = null;
+function isBrowser () {
+  try {return this === window;} catch (e) {return false;}
+}
+
+
+
+export default class StoreModule {
+  constructor (name, dispatchers, state) {
+    this.name = name;
+
+    this.state = state;
     this.isPending = false;
     this.renderHandlers = [];
     this.dispatchers = dispatchers;
@@ -20,7 +27,7 @@ export default class StoreModule {
 
   initState () {
     if (typeof this.dispatchers.init !== 'function') {
-      throw Error(`can not find 'init' of store: ${this.storeName}`);
+      throw Error(`can not find 'init' of store: ${this.name}`);
     }
 
     if (this.isPending) {
@@ -55,7 +62,7 @@ export default class StoreModule {
   syncDispatch (state) {
     if (state !== null) {
       this.state = {...this.state, ...state};
-      this.renderHandlers.forEach(renderHandler => renderHandler({[this.storeName]: this.getState()}));
+      this.renderHandlers.forEach(renderHandler => renderHandler({[this.name]: this.getState()}));
     }
 
     return this.state;

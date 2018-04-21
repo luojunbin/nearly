@@ -1,8 +1,8 @@
 import React from 'react';
+
 import {config} from './config';
 import {getStore} from './store-manager';
 import {getComponentName} from './utils';
-
 
 export function connect (storeNames, Component, PlaceHolder, isPure = config.defaultPure) {
 
@@ -32,10 +32,15 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
 
     componentWillMount () {
       this.store.forEach(v => {
-        v.link(this.setState);
-        v.state
-          ? this.state[v.storeName] = v.getState()
-          : v.initState();
+        // ssr mode
+        if (this.context.graxState) {
+          this.state[v.name] = this.context.graxState[v.name];
+        } else {
+          v.link(this.setState);
+          v.state
+            ? this.state[v.name] = v.getState()
+            : v.initState();
+        }
       });
     }
 
@@ -64,6 +69,9 @@ export function connect (storeNames, Component, PlaceHolder, isPure = config.def
 
   Provider.displayName = `${getComponentName(Component)}-${storeNames}`;
   Provider.isGraxComponent = true;
+  Provider.contextTypes = {
+    graxState: () => null
+  };
 
   return Provider;
 }
