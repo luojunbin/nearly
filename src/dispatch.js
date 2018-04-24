@@ -1,12 +1,25 @@
 import {config} from './config';
 
-export function dispatch(action, ...args) {
-    let {store, dispatcher} = config.beforeDispatch(action);
-    let state = dispatcher.apply(store, [store.getState, ...args]);
+export function dispatch (action, ...args) {
+  config.beforeDispatch(action, ...args);
 
-    return store.dispatch(state);
+  let [storeName, dispatcherName] = action.split('.');
+
+  let store = getStore(storeName);
+  if (!store) {
+    throw Error(`store '${storeName}' does not exist`);
+  }
+
+  let dispatcher = store.dispatchers[dispatcherName];
+  if (!dispatcher) {
+    throw Error(`the module does not export function ${dispatcherName}`);
+  }
+
+  let state = dispatcher.apply(store, [store.getState, ...args]);
+
+  return store.dispatch(state);
 }
 
-export function dispatcher(...args) {
-    return dispatch.bind(null, ...args);
+export function dispatcher (...args) {
+  return dispatch.bind(null, ...args);
 }
