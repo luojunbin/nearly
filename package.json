@@ -3,9 +3,8 @@
   "version": "1.9.4",
   "description": "A light and powerful data flow with React",
   "scripts": {
-    "build": "NODE_ENV=production webpack && ./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register ./test",
-    "rollup": "rollup -c --environment BUILD:production && ./node_modules/babel-cli/bin/babel.js src --out-dir lib"
+    "build": "rollup -c --environment BUILD:production && ./node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
   "keywords": [
     "data flow",
