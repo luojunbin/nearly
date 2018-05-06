@@ -4,7 +4,6 @@
 
 import React from 'react';
 import {render} from 'react-dom';
-import './grax-config';
 import Counter from './Components/Counter';
 
 render(
