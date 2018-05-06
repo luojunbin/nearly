@@ -1,12 +1,5 @@
 import {isThenable} from './utils';
 
-
-function isBrowser () {
-  try {return this === window;} catch (e) {return false;}
-}
-
-
-
 export default class StoreModule {
   constructor (name, dispatchers, state) {
     this.name = name;
