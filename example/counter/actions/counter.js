@@ -4,12 +4,7 @@
 
 // 返回初始 state, 这个方法是必须的
 export function init () {
-  console.log('init counter');
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({count: Math.random()})
-    }, 2000);
-  });
+  return {count: 0}
 }
 
 // Action Function 接收的第一个参数为 getState 方法
