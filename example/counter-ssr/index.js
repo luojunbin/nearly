@@ -29,10 +29,11 @@ export function renderClientApp () {
 }
 
 export function renderServerApp () {
-  return new Promise(resolve => {
-    prepare(['counter']).then(data => {
-      resolve({data, html: renderToString(<ServerApp state={data}/>)});
-    });
+  return prepare(['counter']).then(data => {
+    return {
+      data,
+      html: renderToString(<ServerApp state={data}/>)
+    };
   });
 }
 
