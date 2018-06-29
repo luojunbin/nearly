@@ -14,7 +14,7 @@ Grax 依赖 Promise, 对需要兼容旧版本浏览器的场景, 需要使用 [p
 
 ## 特性
 
-![data-flow](https://github.com/luojunbin/grax/blob/master/doc/flux-diagram-white-background.png)
+![data-flow](https://github.com/luojunbin/grax-react/blob/master/doc/flux-diagram-white-background.png?raw=true)
 
 上图为 [flux](http://facebook.github.io/flux/docs/overview.html#content) 架构图, Grax 参考自 [flux](http://facebook.github.io/flux/docs/overview.html#content), 在其基础上做了以下简化和改进:
 
@@ -219,7 +219,7 @@ export function renderServerApp () {
 
 ## Tips
 
-1. 推荐在 `beforeConnect` 中通过传入的 `storeName` 映射文件名, 动态 ``require` 来 `registerStore`, 这样在保证 `storeName` 唯一性的同时会更加直观和好维护;
+1. 推荐在 `beforeConnect` 中通过传入的 `storeName` 映射文件名, 动态 `require` 来 `registerStore`, 这样在保证 `storeName` 唯一性的同时会更加直观和好维护;
 2. 在 Grax 中对 `Promise` 的判断是不准确的 *(只要有 `then` 方法均认为是 `Promise` 实例)* , 一方面是因为 Grax 中只使用了 `then` 方法, 另一方面是为了兼容 `jQuery.Deferred` 等类库;
 3. 欢迎提 issue 或是 pr;
 

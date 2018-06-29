@@ -22,7 +22,7 @@ export let config = {
             throw Error(`the module does not export function ${dispatcherName}`);
         }
 
-        return {store, dispatcher};        
+        return {store, dispatcher};
     }
 }
 
