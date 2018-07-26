@@ -1,4 +1,4 @@
-import {registerStore, getStore} from './store-manager';
+import {registerStore, getStore} from './store';
 
 export let config = {
     defaultPure: false,

@@ -1,6 +1,7 @@
 import {isThenable} from './utils';
+import {IS_BROWSER} from './env-detect';
 
-export default class StoreModule {
+class StoreModule {
   constructor (name, dispatchers, state) {
     this.name = name;
 
@@ -14,7 +15,10 @@ export default class StoreModule {
     this.syncDispatch = this.syncDispatch.bind(this);
   }
 
-  getState () {
+  getState (storeName) {
+    if (typeof storeName === 'string') {
+      return getStore(storeName).getState();
+    }
     return {...this.state};
   }
 
@@ -61,3 +65,22 @@ export default class StoreModule {
     return this.state;
   }
 }
+
+let storeCache = {};
+
+export function registerStore (storeName, dispatchers) {
+  if (storeCache[storeName]) {
+    return storeCache[storeName];
+  }
+
+  let state = IS_BROWSER && window.__GRAX_STATE__
+    ? window.__GRAX_STATE__[storeName]
+    : null;
+
+  return storeCache[storeName] = new StoreModule(storeName, dispatchers, state);
+}
+
+export function getStore (storeName) {
+  return storeCache[storeName];
+}
+

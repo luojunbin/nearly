@@ -1,6 +1,6 @@
 {
   "name": "grax-react",
-  "version": "1.9.4",
+  "version": "1.9.6",
   "description": "A light and powerful data flow with React",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register ./test",

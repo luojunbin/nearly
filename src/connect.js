@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {config} from './config';
-import {getStore} from './store-manager';
+import {getStore} from './store';
 import {getComponentName} from './utils';
 
 export function connect (storeNames, Component, PlaceHolder, isPure = config.defaultPure) {
